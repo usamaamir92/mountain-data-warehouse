@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\usama\\OneDrive\\Documents\\Projects\\mountain_stockhouse\\server\\server.csproj": {}
+    "C:\\Users\\usama\\OneDrive\\Documents\\Projects\\MountainDataWarehouse\\server\\server.csproj": {}
   },
   "projects": {
-    "C:\\Users\\usama\\OneDrive\\Documents\\Projects\\mountain_stockhouse\\server\\server.csproj": {
+    "C:\\Users\\usama\\OneDrive\\Documents\\Projects\\MountainDataWarehouse\\server\\server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\usama\\OneDrive\\Documents\\Projects\\mountain_stockhouse\\server\\server.csproj",
+        "projectUniqueName": "C:\\Users\\usama\\OneDrive\\Documents\\Projects\\MountainDataWarehouse\\server\\server.csproj",
         "projectName": "server",
-        "projectPath": "C:\\Users\\usama\\OneDrive\\Documents\\Projects\\mountain_stockhouse\\server\\server.csproj",
+        "projectPath": "C:\\Users\\usama\\OneDrive\\Documents\\Projects\\MountainDataWarehouse\\server\\server.csproj",
         "packagesPath": "C:\\Users\\usama\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\usama\\OneDrive\\Documents\\Projects\\mountain_stockhouse\\server\\obj\\",
+        "outputPath": "C:\\Users\\usama\\OneDrive\\Documents\\Projects\\MountainDataWarehouse\\server\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\usama\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -43,7 +43,7 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
-            "Microsoft.EntityFrameworkCore.InMemory": {
+            "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
               "version": "[9.0.0, )"
             },
