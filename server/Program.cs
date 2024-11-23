@@ -1,15 +1,27 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
+using server;
+using server.Services;
+using Microsoft.AspNetCore.Diagnostics;
+using server.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+// Add response logging
+builder.Services.AddLogging(logging =>
+{
+    logging.AddConsole();
+    logging.AddDebug();
+});
+
+
 // Add DbContext with SQL Server configuration
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-           .EnableSensitiveDataLogging()
-           .LogTo(Console.WriteLine, LogLevel.Information));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+        //    .EnableSensitiveDataLogging()
+        //    .LogTo(Console.WriteLine, LogLevel.Information));
 
 // Add the ProductService
 builder.Services.AddScoped<ProductService>();
@@ -33,5 +45,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Use custom exception handler middleware
+app.UseCustomExceptionHandler();
 
 app.Run();

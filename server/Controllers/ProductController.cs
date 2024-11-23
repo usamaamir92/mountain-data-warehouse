@@ -1,30 +1,28 @@
-// File: Controllers/ProductsController.cs
-
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using server.Services;
 
-namespace MountainDataWarehouse.Controllers
+namespace server.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class ProductsController(ProductService productService) : ControllerBase
     {
-        private readonly ProductService _productService;
-
-        // Injecting ProductService into the controller
-        public ProductsController(ProductService productService)
-        {
-            _productService = productService;
-        }
+        // Inject the ProductService into the controller
+        private readonly ProductService _productService = productService;
 
         // GET: api/products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            // Fetching products from the service
-            var products = await _productService.GetAllProductsAsync();
-            return Ok(products);
+            try
+            {
+                var products = await _productService.GetAllProductsAsync();
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while processing your request.", details = ex.Message });
+            }
         }
     }
 }
