@@ -21,7 +21,26 @@ namespace server.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "An error occurred while processing your request.", details = ex.Message });
+                return StatusCode(500, new { Message = "Internal Server Error", Details = ex.Message });
+            }
+        }
+
+        // POST: api/products
+        [HttpPost]
+        public async Task<ActionResult<Product>> CreateProduct([FromBody] Product product)
+        {
+            try
+            {
+                var createdProduct = await _productService.AddProductAsync(product);
+                return CreatedAtAction(nameof(GetProducts), new { id = createdProduct.ProductId }, createdProduct);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Internal Server Error", Details = ex.Message });
             }
         }
     }

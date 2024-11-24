@@ -30,8 +30,7 @@ namespace server
         [Precision(9,2)]
         public required decimal Price { get; set; }
         [Required]
-        // public required int Stock { get; set; }
-        public required string Stock { get; set; }
+        public required int Stock { get; set; }
     }
 
 

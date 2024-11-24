@@ -18,23 +18,6 @@ namespace server.Extensions
                     var statusCode = StatusCodes.Status500InternalServerError;
                     string errorMessage = "An unexpected error occurred. Please try again later.";
 
-                    // Customize status code and error message based on exception type
-                    if (exception is InvalidOperationException)
-                    {
-                        statusCode = StatusCodes.Status400BadRequest;
-                        errorMessage = "Invalid operation. Please check your input.";
-                    }
-                    else if (exception is KeyNotFoundException)
-                    {
-                        statusCode = StatusCodes.Status404NotFound;
-                        errorMessage = "The requested resource was not found.";
-                    }
-                    else if (exception is UnauthorizedAccessException)
-                    {
-                        statusCode = StatusCodes.Status401Unauthorized;
-                        errorMessage = "You are not authorized to perform this action.";
-                    }
-
                     context.Response.StatusCode = statusCode;
 
                     var errorResponse = new
