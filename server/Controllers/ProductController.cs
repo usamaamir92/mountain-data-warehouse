@@ -10,7 +10,7 @@ namespace server.Controllers
         // Inject the ProductService into the controller
         private readonly ProductService _productService = productService;
 
-        // GET: api/products
+        // GET: /products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
@@ -25,7 +25,7 @@ namespace server.Controllers
             }
         }
 
-        // POST: api/products
+        // POST: /products
         [HttpPost]
         public async Task<ActionResult<Product>> CreateProduct([FromBody] Product product)
         {
@@ -43,5 +43,29 @@ namespace server.Controllers
                 return StatusCode(500, new { Message = "Internal Server Error", Details = ex.Message });
             }
         }
+
+        // PATCH: /products/{id}
+        [HttpPatch("{id:guid}")]
+        public async Task<ActionResult<Product>> UpdateProduct(Guid id, [FromBody] UpdateProductRequest request)
+        {
+            try
+            {
+                var updatedProduct = await _productService.UpdateProductAsync(id, request.Price, request.Stock);
+                return Ok(updatedProduct);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Internal Server Error", Details = ex.Message });
+            }
+        }
+
     }
 }

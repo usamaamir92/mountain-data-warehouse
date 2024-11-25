@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using server.Extensions;
 
 
 namespace server
@@ -27,10 +28,12 @@ namespace server
         [Required]
         public required string Description { get; set; }
         [Required]
-        [Precision(9,2)]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0.")]
         public required decimal Price { get; set; }
         [Required]
-        public required int Stock { get; set; }
+        [Integer(ErrorMessage = "The Stock value must be an integer.")]
+        [Range(0, double.MaxValue, ErrorMessage = "Stock value must be 0 or greater.")]
+        public required decimal Stock { get; set; }
     }
 
 
@@ -41,5 +44,15 @@ namespace server
     //     public int TotalAmount { get; set; }
     //     public Product[] Products { get; set; }
     // }
+
+    public class UpdateProductRequest
+    {
+        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0.")]
+        public decimal? Price { get; set; }
+        [UpdateInteger(ErrorMessage = "The Stock value must be an integer.")]
+        [Range(0, double.MaxValue, ErrorMessage = "Stock value must be 0 or greater.")]
+        public decimal? Stock { get; set; }
+    }
+
 }
 

@@ -16,9 +16,9 @@ namespace server.Services
             {
                 return await _context.Products.ToListAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception("An unexpected error occurred while fetching the list of products.", ex);  
+                throw;
             }
         }
 
@@ -46,5 +46,43 @@ namespace server.Services
                 throw;
             }
         }
+
+        // Method to update product price and/or stock
+        public async Task<Product> UpdateProductAsync(Guid productId, decimal? newPrice, decimal? newStock)
+        {
+            if (!newPrice.HasValue && !newStock.HasValue)
+            {
+                throw new ArgumentException("At least one of updated Price or updated Stock must be provided.");
+            }
+
+            try
+            {
+                var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+                
+                if (product == null)
+                {
+                    throw new KeyNotFoundException("Product not found.");
+                }
+
+                // Update property if new value is provided
+                if (newPrice.HasValue)
+                {
+                    product.Price = newPrice.Value;
+                }
+
+                if (newStock.HasValue)
+                {
+                    product.Stock = newStock.Value;
+                }
+
+                await _context.SaveChangesAsync();
+                return product;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }
