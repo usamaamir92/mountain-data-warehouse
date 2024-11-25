@@ -45,12 +45,24 @@ namespace server.Controllers
         }
 
         // PATCH: /products/{id}
-        [HttpPatch("{id:guid}")]
-        public async Task<ActionResult<Product>> UpdateProduct(Guid id, [FromBody] UpdateProductRequest request)
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<Product>> UpdateProduct(string id, [FromBody] UpdateProductRequest request)
         {
+            // Check if ID provided is a valid Guid
+            if (!Guid.TryParse(id, out Guid productId))
+            {
+                return BadRequest(new { Message = "Invalid GUID format." });
+            }
+
+            // Check that at least one of price or stock is provided
+            if (!request.Price.HasValue && !request.Stock.HasValue)
+            {
+                return BadRequest(new { Message = "At least one of Price or Stock must be provided." });
+            }
+
             try
             {
-                var updatedProduct = await _productService.UpdateProductAsync(id, request.Price, request.Stock);
+                var updatedProduct = await _productService.UpdateProductAsync(productId, request.Price, request.Stock);
                 return Ok(updatedProduct);
             }
             catch (KeyNotFoundException ex)
@@ -60,6 +72,31 @@ namespace server.Controllers
             catch (ArgumentException ex)
             {
                 return BadRequest(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Internal Server Error", Details = ex.Message });
+            }
+        }
+
+        // DELETE /products/{id}
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteProduct(string id)
+        {
+            // Check if ID provided is a valid Guid
+            if (!Guid.TryParse(id, out Guid productId))
+            {
+                return BadRequest(new { Message = "Invalid GUID format." });
+            }
+
+            try
+            {
+                var wasDeleted = await _productService.DeleteProductAsync(productId);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
             }
             catch (Exception ex)
             {

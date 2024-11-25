@@ -50,18 +50,14 @@ namespace server.Services
         // Method to update product price and/or stock
         public async Task<Product> UpdateProductAsync(Guid productId, decimal? newPrice, decimal? newStock)
         {
-            if (!newPrice.HasValue && !newStock.HasValue)
-            {
-                throw new ArgumentException("At least one of updated Price or updated Stock must be provided.");
-            }
-
             try
             {
                 var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
-                
+
+                // Check if product exists   
                 if (product == null)
                 {
-                    throw new KeyNotFoundException("Product not found.");
+                    throw new KeyNotFoundException("No product with the given ID exists.");
                 }
 
                 // Update property if new value is provided
@@ -77,6 +73,30 @@ namespace server.Services
 
                 await _context.SaveChangesAsync();
                 return product;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        // Method to delete a product
+        public async Task<bool> DeleteProductAsync(Guid productId)
+        {
+            try
+            {
+                var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+
+                // Check if product exists   
+                if (product == null)
+                {
+                    throw new KeyNotFoundException("No product with the given ID exists.");
+                }
+
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+
+                return true;
             }
             catch (Exception)
             {
