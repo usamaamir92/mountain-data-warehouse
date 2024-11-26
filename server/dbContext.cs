@@ -21,6 +21,15 @@ namespace server
         // Configure relationship between Product and Order
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Configure currency columns in tables
+            modelBuilder.Entity<Product>()
+            .Property(p => p.Price)
+            .HasColumnType("decimal(19,2)");
+
+            modelBuilder.Entity<Order>()
+            .Property(o => o.TotalAmount)
+            .HasColumnType("decimal(19,2)");
+
             // Configure many-to-many relationship using the join table
             modelBuilder.Entity<OrderProduct>()
                 .HasKey(op => new { op.OrderId, op.ProductId });
@@ -52,9 +61,8 @@ namespace server
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0.")]
         public required decimal Price { get; set; }
         [Required]
-        [Integer(ErrorMessage = "The Stock value must be an integer.")]
         [Range(0, double.MaxValue, ErrorMessage = "Stock value must be 0 or greater.")]
-        public required decimal Stock { get; set; }
+        public required int Stock { get; set; }
         public ICollection<OrderProduct>? OrderProducts { get; set; }
     }
 
@@ -102,9 +110,8 @@ namespace server
         public required decimal Price { get; set; }
 
         [Required]
-        [Integer(ErrorMessage = "The Stock value must be an integer.")]
         [Range(0, double.MaxValue, ErrorMessage = "Stock value must be 0 or greater.")]
-        public required decimal Stock { get; set; }
+        public required int Stock { get; set; }
     }
 
     // Request model for updating an existing product (PATCH /products)
@@ -112,9 +119,8 @@ namespace server
     {
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0.")]
         public decimal? Price { get; set; }
-        [UpdateInteger(ErrorMessage = "The Stock value must be an integer.")]
         [Range(0, double.MaxValue, ErrorMessage = "Stock value must be 0 or greater.")]
-        public decimal? Stock { get; set; }
+        public int? Stock { get; set; }
     }
 
     // Request model for creating a new Order (POST /orders) 
@@ -128,7 +134,10 @@ namespace server
     // Request model for list of Products in a new Order (POST /orders)
     public class OrderProductRequest
     {
+        [Required]
         public Guid ProductId { get; set; }
+        [Required]
+        [Range(1, double.MaxValue, ErrorMessage = "Quantity must be atleast 1.")]
         public required int Quantity { get; set; }
     }
 
@@ -139,7 +148,7 @@ namespace server
         public required string Name { get; set; }
         public required string Description { get; set; }
         public required decimal Price { get; set; }
-        public required decimal Stock { get; set; }
+        public required int Stock { get; set; }
     }
 
     // Response model for Order (GET/POST)

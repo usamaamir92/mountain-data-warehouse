@@ -74,7 +74,7 @@ namespace server.Services
         }
 
         // Method to update product price and/or stock
-        public async Task<ProductResponse> UpdateProductAsync(Guid productId, decimal? newPrice, decimal? newStock)
+        public async Task<ProductResponse> UpdateProductAsync(Guid productId, decimal? newPrice, int? newStock)
         {
             try
             {
