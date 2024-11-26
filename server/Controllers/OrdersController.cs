@@ -5,10 +5,10 @@ namespace server.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class OrdersController(OrderService orderService) : ControllerBase
+    public class OrdersController(OrdersService orderService) : ControllerBase
     {
         // Inject the OrderService into the controller
-        private readonly OrderService _orderService = orderService;
+        private readonly OrdersService _orderService = orderService;
 
         // GET: /orders
         [HttpGet]
@@ -16,6 +16,7 @@ namespace server.Controllers
         {
             try
             {
+                // Get list of orders from the Products table
                 var orders = await _orderService.GetAllOrdersAsync();
                 return Ok(orders);
             }
@@ -31,6 +32,7 @@ namespace server.Controllers
         {
             try
             {
+                // Create order and add to Orders table
                 var createdOrder = await _orderService.CreateOrderAsync(request);
                 return CreatedAtAction(nameof(GetOrderById), new { id = createdOrder.OrderId }, createdOrder);
             }
@@ -48,6 +50,7 @@ namespace server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderResponse>> GetOrderById(string id)
         {
+            // Check if order ID provided is a valid Guid
             if (!Guid.TryParse(id, out Guid orderId))
             {
                 return BadRequest(new { Message = "Invalid GUID format." });
@@ -55,6 +58,7 @@ namespace server.Controllers
 
             try
             {
+                // Get orders from the Orders table                
                 var order = await _orderService.GetOrderByIdAsync(orderId);
                 return Ok(order);
             }

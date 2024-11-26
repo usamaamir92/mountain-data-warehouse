@@ -5,10 +5,10 @@ namespace server.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class ProductsController(ProductService productService) : ControllerBase
+    public class ProductsController(ProductsService productService) : ControllerBase
     {
         // Inject the ProductService into the controller
-        private readonly ProductService _productService = productService;
+        private readonly ProductsService _productService = productService;
 
         // GET: /products
         [HttpGet]
@@ -16,6 +16,7 @@ namespace server.Controllers
         {
             try
             {
+                // Get list of products from the Products table
                 var products = await _productService.GetAllProductsAsync();
                 return Ok(products);
             }
@@ -31,6 +32,7 @@ namespace server.Controllers
         {
             try
             {
+                // Create product and add to Products table
                 var createdProduct = await _productService.AddProductAsync(productRequest);
                 return CreatedAtAction(nameof(GetProducts), new { id = createdProduct.ProductId }, createdProduct);
             }
@@ -48,13 +50,13 @@ namespace server.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult<ProductResponse>> UpdateProduct(string id, [FromBody] UpdateProductRequest request)
         {
-            // Check if ID provided is a valid Guid
+            // Check if product ID provided is a valid Guid
             if (!Guid.TryParse(id, out Guid productId))
             {
                 return BadRequest(new { Message = "Invalid GUID format." });
             }
 
-            // Check that at least one of price or stock is provided
+            // Check that at least one of updated price or stock is provided in the request
             if (!request.Price.HasValue && !request.Stock.HasValue)
             {
                 return BadRequest(new { Message = "At least one of Price or Stock must be provided." });
@@ -62,6 +64,7 @@ namespace server.Controllers
 
             try
             {
+                // Update product and return updated product
                 var updatedProduct = await _productService.UpdateProductAsync(productId, request.Price, request.Stock);
                 return Ok(updatedProduct);
             }
@@ -91,6 +94,7 @@ namespace server.Controllers
 
             try
             {
+                // Delete product
                 var wasDeleted = await _productService.DeleteProductAsync(productId);
                 return NoContent();
             }

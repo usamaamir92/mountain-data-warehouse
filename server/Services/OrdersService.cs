@@ -2,17 +2,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace server.Services
 {
-    public class OrderService(ApplicationDbContext context, ILogger<OrderService> logger)
+    public class OrdersService(ApplicationDbContext context)
     {
-        // Inject database and logger dependencies
+        // Inject database dependency
         private readonly ApplicationDbContext _context = context;
-        private readonly ILogger<OrderService> _logger = logger;
 
         // Method to get all orders with product details
         public async Task<List<OrderResponse>> GetAllOrdersAsync()
         {
             try
             {
+                // Fetch orders list and map each order to the OrderResponse model and return
                 return await _context.Orders
                     .Include(o => o.OrderProducts)
                     .ThenInclude(op => op.Product)
@@ -21,9 +21,12 @@ namespace server.Services
                         OrderId = o.OrderId,
                         OrderDate = o.OrderDate,
                         TotalAmount = o.TotalAmount,
-                        Products = o.OrderProducts.Select(op => new OrderProductDetails
+                        Products = o.OrderProducts.Select(op => new OrderProductResponse
                         {
                             ProductId = op.ProductId,
+                            Name = op.Product.Name,
+                            Description = op.Product.Description,
+                            Price = op.Product.Price,
                             Quantity = op.Quantity
                         }).ToList()
                     }).ToListAsync();
@@ -39,18 +42,17 @@ namespace server.Services
         {
             try
             {
-                // Checkkkkk
-                // Validate products
+                // Validate existence of products in the request by comparing to a list from the Products table
                 var products = await _context.Products
                     .Where(p => request.Products.Select(rp => rp.ProductId).Contains(p.ProductId))
                     .ToListAsync();
 
                 if (products.Count != request.Products.Count)
                 {
-                    throw new ArgumentException("Some products in the order request are not valid.");
+                    throw new ArgumentException("Some Product IDs in the order request are not valid.");
                 }
 
-                // Initialize a new Order instance
+                // Initialise a new Order instance
                 var order = new Order
                 {
                     OrderId = Guid.NewGuid(),
@@ -58,7 +60,7 @@ namespace server.Services
                     TotalAmount = 0
                 };
 
-                // Calculate total amount and check stock for each product in the request
+                // Calculate the total amount and check stock for each product in the request
                 decimal totalAmount = 0;
                 var orderProducts = new List<OrderProduct>();
 
@@ -77,7 +79,7 @@ namespace server.Services
                     // Deduct requested quantity from stock
                     product.Stock -= reqProduct.Quantity;
 
-
+                    // Map order and products relation to OrderProduct table
                     orderProducts.Add(new OrderProduct
                     {
                         OrderId = order.OrderId,
@@ -96,15 +98,18 @@ namespace server.Services
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
 
-                // Return the created Order object
+                // Map the created order to the OrderResponse object and return
                 return new OrderResponse
                 {
                     OrderId = order.OrderId,
                     OrderDate = order.OrderDate,
                     TotalAmount = order.TotalAmount,
-                    Products = order.OrderProducts.Select(op => new OrderProductDetails
+                    Products = order.OrderProducts.Select(op => new OrderProductResponse
                     {
                         ProductId = op.ProductId,
+                        Name = op.Product.Name,
+                        Description = op.Product.Description,
+                        Price = op.Product.Price,
                         Quantity = op.Quantity
                     }).ToList()
                 };
@@ -120,6 +125,7 @@ namespace server.Services
         {
             try
             {
+                // Check if an order with the given Order Id exists
                 var order = await _context.Orders
                     .Include(o => o.OrderProducts)
                     .ThenInclude(op => op.Product)
@@ -130,14 +136,18 @@ namespace server.Services
                     throw new KeyNotFoundException("No order with the given ID exists.");
                 }
 
+                // Map the order to the OrderResponse object and return
                 return new OrderResponse
                 {
                     OrderId = order.OrderId,
                     OrderDate = order.OrderDate,
                     TotalAmount = order.TotalAmount,
-                    Products = order.OrderProducts.Select(op => new OrderProductDetails
+                    Products = order.OrderProducts.Select(op => new OrderProductResponse
                     {
                         ProductId = op.ProductId,
+                        Name = op.Product.Name,
+                        Description = op.Product.Description,
+                        Price = op.Product.Price,
                         Quantity = op.Quantity
                     }).ToList()
                 };

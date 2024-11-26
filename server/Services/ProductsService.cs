@@ -2,21 +2,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace server.Services
 {
-    public class ProductService(ApplicationDbContext context, ILogger<ProductService> logger)
+    public class ProductsService(ApplicationDbContext context)
     {
-        // Inject database and logger dependencies
+        // Inject database dependency
         private readonly ApplicationDbContext _context = context;
-        private readonly ILogger<ProductService> _logger = logger;
-
 
         // Method to get all products
         public async Task<List<ProductResponse>> GetAllProductsAsync()
         {
             try 
             {
-                // return await _context.Products.ToListAsync();
-
-                // Fetch products and map to ProductResponse object
+                // Fetch products list and map each product to the ProductResponse model and return
                 return await _context.Products
                     .Select(product => new ProductResponse
                     {
@@ -36,7 +32,7 @@ namespace server.Services
          // Method to add a product
         public async Task<ProductResponse> AddProductAsync(ProductRequest productRequest)
         {
-            // Check if a product with the same name already exists
+            // Check if a product with the same name already exists and throw error if so
             bool productExists = await _context.Products
                 .AnyAsync(p => p.Name.ToLower() == productRequest.Name.ToLower());
 
@@ -45,7 +41,7 @@ namespace server.Services
                 throw new ArgumentException("A product with the same name already exists.");
             }
 
-            // Map request to ProductRequest object
+            // Map the request to the ProductRequest model
             var product = new Product
             {
                 ProductId = Guid.NewGuid(),
@@ -55,13 +51,13 @@ namespace server.Services
                 Stock = productRequest.Stock
             };
             
-            // Add product if it doesn't already exist
             try
             {
+                // Add the product to the Products table
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync();
 
-                // Map the created product to the ProductResponse object
+                // Map the created product to the ProductResponse model and return
                 return new ProductResponse
                 {
                     ProductId = product.ProductId,
@@ -70,7 +66,6 @@ namespace server.Services
                     Price = product.Price,
                     Stock = product.Stock
                 };
-                // return product;
             }
             catch (Exception)
             {
@@ -85,7 +80,7 @@ namespace server.Services
             {
                 var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
 
-                // Check if product exists   
+                // Check if a product with the given Product Id exists   
                 if (product == null)
                 {
                     throw new KeyNotFoundException("No product with the given ID exists.");
@@ -103,9 +98,8 @@ namespace server.Services
                 }
 
                 await _context.SaveChangesAsync();
-                // return product;
 
-                // Map to ProductResponse entity
+                // Map to updated product to the ProductResponse model and return
                 return new ProductResponse
                 {
                     ProductId = product.ProductId,
@@ -128,12 +122,13 @@ namespace server.Services
             {
                 var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
 
-                // Check if product exists   
+                // Check if a product with the given Product Id exists   
                 if (product == null)
                 {
                     throw new KeyNotFoundException("No product with the given ID exists.");
                 }
 
+                // Delete from Products table
                 _context.Products.Remove(product);
                 await _context.SaveChangesAsync();
 

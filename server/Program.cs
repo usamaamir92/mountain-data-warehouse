@@ -24,8 +24,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         //    .LogTo(Console.WriteLine, LogLevel.Information));
 
 // Add the ProductService
-builder.Services.AddScoped<ProductService>();
-builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<ProductsService>();
+builder.Services.AddScoped<OrdersService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
