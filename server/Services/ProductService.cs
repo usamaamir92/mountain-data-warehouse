@@ -10,11 +10,22 @@ namespace server.Services
 
 
         // Method to get all products
-        public async Task<List<Product>> GetAllProductsAsync()
+        public async Task<List<ProductResponse>> GetAllProductsAsync()
         {
             try 
             {
-                return await _context.Products.ToListAsync();
+                // return await _context.Products.ToListAsync();
+
+                // Fetch products and map to ProductResponse object
+                return await _context.Products
+                    .Select(product => new ProductResponse
+                    {
+                        ProductId = product.ProductId,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Price = product.Price,
+                        Stock = product.Stock
+                    }).ToListAsync();
             }
             catch (Exception)
             {
@@ -23,23 +34,43 @@ namespace server.Services
         }
 
          // Method to add a product
-        public async Task<Product> AddProductAsync(Product product)
+        public async Task<ProductResponse> AddProductAsync(ProductRequest productRequest)
         {
             // Check if a product with the same name already exists
             bool productExists = await _context.Products
-                .AnyAsync(p => p.Name.ToLower() == product.Name.ToLower());
+                .AnyAsync(p => p.Name.ToLower() == productRequest.Name.ToLower());
 
             if (productExists)
             {
                 throw new ArgumentException("A product with the same name already exists.");
             }
+
+            // Map request to ProductRequest object
+            var product = new Product
+            {
+                ProductId = Guid.NewGuid(),
+                Name = productRequest.Name,
+                Description = productRequest.Description,
+                Price = productRequest.Price,
+                Stock = productRequest.Stock
+            };
             
             // Add product if it doesn't already exist
             try
             {
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync();
-                return product;
+
+                // Map the created product to the ProductResponse object
+                return new ProductResponse
+                {
+                    ProductId = product.ProductId,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    Stock = product.Stock
+                };
+                // return product;
             }
             catch (Exception)
             {
@@ -48,7 +79,7 @@ namespace server.Services
         }
 
         // Method to update product price and/or stock
-        public async Task<Product> UpdateProductAsync(Guid productId, decimal? newPrice, decimal? newStock)
+        public async Task<ProductResponse> UpdateProductAsync(Guid productId, decimal? newPrice, decimal? newStock)
         {
             try
             {
@@ -72,7 +103,17 @@ namespace server.Services
                 }
 
                 await _context.SaveChangesAsync();
-                return product;
+                // return product;
+
+                // Map to ProductResponse entity
+                return new ProductResponse
+                {
+                    ProductId = product.ProductId,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    Stock = product.Stock
+                };
             }
             catch (Exception)
             {

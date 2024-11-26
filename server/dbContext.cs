@@ -72,6 +72,7 @@ namespace server
         public ICollection<OrderProduct> OrderProducts { get; set; }
     }
 
+
     public class OrderProduct
     {
         [Required]
@@ -96,11 +97,40 @@ namespace server
         public decimal? Stock { get; set; }
     }
 
+    // Checkkk, add annotations
+    public class ProductRequest
+    {
+        [Required]
+        public required string Name { get; set; }
+
+        [Required]
+        public required string Description { get; set; }
+
+        [Required]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0.")]
+        public required decimal Price { get; set; }
+
+        [Required]
+        [Integer(ErrorMessage = "The Stock value must be an integer.")]
+        [Range(0, double.MaxValue, ErrorMessage = "Stock value must be 0 or greater.")]
+        public required decimal Stock { get; set; }
+    }
+
     public class CreateOrderRequest
     {
         [Required]
         [MinLength(1, ErrorMessage = "The order must contain at least one product.")]
         public required List<OrderProductDetails> Products { get; set; }
+    }
+
+
+    public class ProductResponse
+    {
+        public Guid ProductId { get; set; }
+        public required string Name { get; set; }
+        public required string Description { get; set; }
+        public required decimal Price { get; set; }
+        public required decimal Stock { get; set; }
     }
 
     public class OrderResponse

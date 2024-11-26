@@ -12,7 +12,7 @@ namespace server.Controllers
 
         // GET: /products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductResponse>>> GetProducts()
         {
             try
             {
@@ -27,11 +27,11 @@ namespace server.Controllers
 
         // POST: /products
         [HttpPost]
-        public async Task<ActionResult<Product>> CreateProduct([FromBody] Product product)
+        public async Task<ActionResult<ProductResponse>> CreateProduct([FromBody] ProductRequest productRequest)
         {
             try
             {
-                var createdProduct = await _productService.AddProductAsync(product);
+                var createdProduct = await _productService.AddProductAsync(productRequest);
                 return CreatedAtAction(nameof(GetProducts), new { id = createdProduct.ProductId }, createdProduct);
             }
             catch (ArgumentException ex)
@@ -46,7 +46,7 @@ namespace server.Controllers
 
         // PATCH: /products/{id}
         [HttpPatch("{id}")]
-        public async Task<ActionResult<Product>> UpdateProduct(string id, [FromBody] UpdateProductRequest request)
+        public async Task<ActionResult<ProductResponse>> UpdateProduct(string id, [FromBody] UpdateProductRequest request)
         {
             // Check if ID provided is a valid Guid
             if (!Guid.TryParse(id, out Guid productId))
