@@ -9,18 +9,21 @@ import {
   TableRow,
   Paper,
   Typography,
-  IconButton,
   Tooltip,
   Fab,
   Snackbar,
   Alert
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import AddOrderDialog from '../Components/AddOrderDIalog';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState<any[]>([]); // Orders state
+
+  const [addOrderDialogOpen, setAddOrderDialogOpen] = useState(false);
+  const [availableProducts, setAvailableProducts] = useState<{ productId: string, name: string }[]>([]);
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -38,6 +41,16 @@ const OrdersPage = () => {
     };
 
     fetchOrders();
+
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(`${backendUrl}/products`);
+        setAvailableProducts(response.data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+    fetchProducts();
   }, []);
 
   // Function to close snackbar alerts
@@ -46,11 +59,17 @@ const OrdersPage = () => {
   };
 
   // Add Order button
-  const handleOpenAddOrderDialog = () => {
-    // Add logic for opening the add order dialog when implemented
-    setSnackbarMessage("Add order functionality coming soon!");
-    setSnackbarSeverity("info");
-    setSnackbarOpen(true);
+  const handleOpenAddOrderDialog = () => setAddOrderDialogOpen(true);
+  const handleCloseAddOrderDialog = () => setAddOrderDialogOpen(false);
+
+  const handleAddOrder = async (order: { products: { productId: string, quantity: number }[] }) => {
+    try {
+      const response = await axios.post(`${backendUrl}/orders`, order);
+      setOrders((prev) => [...prev, response.data]);
+      handleCloseAddOrderDialog();
+    } catch (error) {
+      console.error('Error adding order:', error);
+    }
   };
 
   return (
@@ -58,6 +77,13 @@ const OrdersPage = () => {
       <Typography variant="h4" gutterBottom>
         Orders
       </Typography>
+
+      <AddOrderDialog
+        open={addOrderDialogOpen}
+        onClose={handleCloseAddOrderDialog}
+        onAdd={handleAddOrder}
+        availableProducts={availableProducts}
+      />
 
       {/* Add Order Button */}
       <Tooltip title="Add new order">

@@ -217,7 +217,6 @@ const ProductsPage = () => {
       onClose={handleCloseDeleteProductDialog}
       onConfirm={handleConfirmDeleteProduct}
       title="Confirm Deletion"
-      // description="Are you sure you want to delete this product? This action cannot be undone."
       description={`Are you sure you want to delete ${selectedProductName}? This action cannot be undone.`}
       confirmText="Delete"
       cancelText="Cancel"
