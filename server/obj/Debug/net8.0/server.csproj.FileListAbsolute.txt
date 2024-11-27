@@ -166,3 +166,5 @@ C:\Users\usama\OneDrive\Documents\Projects\MountainDataWarehouse\server\obj\Debu
 C:\Users\usama\OneDrive\Documents\Projects\MountainDataWarehouse\server\obj\Debug\net8.0\server.pdb
 C:\Users\usama\OneDrive\Documents\Projects\MountainDataWarehouse\server\obj\Debug\net8.0\server.genruntimeconfig.cache
 C:\Users\usama\OneDrive\Documents\Projects\MountainDataWarehouse\server\obj\Debug\net8.0\ref\server.dll
+C:\Users\usama\OneDrive\Documents\Projects\MountainDataWarehouse\server\bin\Debug\net8.0\DotNetEnv.dll
+C:\Users\usama\OneDrive\Documents\Projects\MountainDataWarehouse\server\bin\Debug\net8.0\Sprache.dll

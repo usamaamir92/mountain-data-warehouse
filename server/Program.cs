@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
 using server;
 using server.Services;
-using Microsoft.AspNetCore.Diagnostics;
-using server.Extensions;
+using DotNetEnv;
+
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +22,28 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
         //    .EnableSensitiveDataLogging()
         //    .LogTo(Console.WriteLine, LogLevel.Information));
+
+// Define the CORS policy
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL");
+
+if (string.IsNullOrEmpty(frontendUrl))
+{
+    // Throw exception if FRONTEND_URL is not set
+    throw new InvalidOperationException("The environment variable FRONTEND_URL is not set. Please set it in the .env file or your environment.");
+}
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins(frontendUrl)
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
 
 // Add the ProductService
 builder.Services.AddScoped<ProductsService>();
@@ -48,13 +70,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Apply CORS globally to all routes
+app.UseCors(MyAllowSpecificOrigins);
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
-
-// Use custom exception handler middleware
-app.UseCustomExceptionHandler();
 
 app.Run();
