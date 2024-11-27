@@ -7,8 +7,6 @@ import OrdersPage from './Pages/OrdersPage';
 const drawerWidth = 240;
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <Router>
       <Box
@@ -29,7 +27,7 @@ function App() {
           </Toolbar>
         </AppBar>
 
-        {/* Drawer - Clipped under AppBar */}
+        {/* Navbar */}
         <Drawer
           variant="permanent"
           sx={{
@@ -45,9 +43,11 @@ function App() {
             },
           }}
         >
-        {/* Spacer for the AppBar's height */}
+
+        {/* Spacer */}
         <Toolbar />
         
+        {/* Navbar Items */}
         <Box sx={{ overflow: 'auto' }}>
           <List>
             <ListItemButton component={Link} to="/products">
@@ -69,15 +69,17 @@ function App() {
             p: 3,
             ml: `${drawerWidth}px`, // To make space for the drawer
             mt: '64px', // Adjust the top margin to avoid overlap with AppBar
-            height: '100vh',
+            height: 'calc(100vh - 64px)',
             overflow: 'auto',
           }}
         >
-          <Routes>
-            <Route path="/products" element={<ProductsPage />} />
-            <Route path="/orders" element={<OrdersPage />} />
-            <Route path="/" element={<Typography variant="h4">Home Page</Typography>} />
-          </Routes>
+
+        {/* Set routes */}
+        <Routes>
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/" element={<Typography variant="h4">Home Page</Typography>} />
+        </Routes>
         </Box>
       </Box>
     </Router>

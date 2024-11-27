@@ -11,7 +11,9 @@ import {
   Typography,
   IconButton,
   Tooltip,
-  Fab
+  Fab,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import UpdateProductDialog from '../Components/UpdateProductDialog';
 import DeleteProductDialog from '../Components/DeleteProductDialog';
@@ -25,20 +27,20 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
 
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteProductDialogOpen, setDeleteProductDialogOpen] = useState(false);
   const [updateProductDialogOpen, setUpdateProductDialogOpen] = useState(false);  
   const [addProductDialogOpen, setAddProductDialogOpen] = useState(false);
   
+  const [selectedProductName, setSelectedProductName] = useState<string | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   
   const [currentProductName, setCurrentProductName] = useState<string | null>(null);
   const [currentProductId, setCurrentProductId] = useState<string | null>(null);
-  const [newProduct, setNewProduct] = useState({
-    name: '',
-    description: '',
-    price: '',
-    stock: '',
-  });
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
 
   // Load Products on load
   useEffect(() => {
@@ -54,14 +56,18 @@ const ProductsPage = () => {
     fetchProducts();
   }, []);
 
+  // Function to close snackbar alerts
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+  
   // Update product functions and modal
-  const handleOpenUpdateProductDialog = (productName: string, productId: string) => {
+  const handleOpenUpdateProductDialog = (productId: string, productName: string) => {
     setCurrentProductId(productId);
     setCurrentProductName(productName);
     setUpdateProductDialogOpen(true);
   };
   
-
   const handleCloseUpdateProductDialog = () => {
     setUpdateProductDialogOpen(false);
 
@@ -86,25 +92,39 @@ const ProductsPage = () => {
             : product
         )
       );
+
+      // Show success alert
+      setSnackbarMessage(`${currentProductName} successfully updated.`);
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
   
       console.log(`Updated product ${currentProductId}:`, values);
     } catch (error) {
       console.error('Error updating product:', error);
+
+      // Show error alert
+      setSnackbarMessage(`Error updating ${currentProductName}. Please try again.`);
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
   };
 
   
   // Delete product functions and modal
-  const handleOpenDeleteProductDialog = (productId: string) => {
+  const handleOpenDeleteProductDialog = (productId: string, productName: string) => {
     setSelectedProductId(productId);
-    setDeleteDialogOpen(true);
+    setSelectedProductName(productName);
+    setDeleteProductDialogOpen(true);
   };
   
   const handleCloseDeleteProductDialog = () => {
-    setDeleteDialogOpen(false);
-    setSelectedProductId(null);
-  };
+    setDeleteProductDialogOpen(false);
 
+    setTimeout(() => {
+      setSelectedProductId(null);
+      setSelectedProductName(null);  
+    }, 300);
+  };
 
   const handleConfirmDeleteProduct = async () => {
     if (selectedProductId) {
@@ -120,8 +140,18 @@ const ProductsPage = () => {
       setProducts((prevProducts) =>
         prevProducts.filter((product) => product.productId !== productId)
       );
+
+      // Show success alert
+      setSnackbarMessage(`${currentProductName} deleted successfully.`);
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
     } catch (error) {
       console.error('Error deleting product:', error);
+
+      // Show error alert
+      setSnackbarMessage(`Error deleting ${currentProductName}. Please try again.`);
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
   };
 
@@ -141,6 +171,11 @@ const ProductsPage = () => {
         price: parseFloat(price),
         stock: parseInt(stock, 10),
       });
+
+      // Show success alert
+      setSnackbarMessage(`${name} successfully added.`);
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
   
       // Add the new product to the state
       setProducts((prev) => [...prev, response.data]);
@@ -149,6 +184,11 @@ const ProductsPage = () => {
       handleCloseAddProductDialog();
     } catch (error) {
       console.error('Error adding product:', error);
+
+      // Show error alert
+      setSnackbarMessage(`Error adding ${name}. Please try again.`);
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
   };
   
@@ -159,17 +199,7 @@ const ProductsPage = () => {
         Products
       </Typography>
 
-      <DeleteProductDialog
-      open={deleteDialogOpen}
-      onClose={handleCloseDeleteProductDialog}
-      onConfirm={handleConfirmDeleteProduct}
-      title="Confirm Deletion"
-      description="Are you sure you want to delete this product? This action cannot be undone."
-      confirmText="Delete"
-      cancelText="Cancel"
-      />
-
-      {/* Edit Dialog */}
+      {/* Edit Product Dialog */}
       <UpdateProductDialog
         open={updateProductDialogOpen}
         onClose={handleCloseUpdateProductDialog}
@@ -179,6 +209,18 @@ const ProductsPage = () => {
           price: products.find((p) => p.productId === currentProductId)?.price,
           stock: products.find((p) => p.productId === currentProductId)?.stock,
         }}
+      />
+
+      {/* Delete Product Dialog */}
+      <DeleteProductDialog
+      open={deleteProductDialogOpen}
+      onClose={handleCloseDeleteProductDialog}
+      onConfirm={handleConfirmDeleteProduct}
+      title="Confirm Deletion"
+      // description="Are you sure you want to delete this product? This action cannot be undone."
+      description={`Are you sure you want to delete ${selectedProductName}? This action cannot be undone.`}
+      confirmText="Delete"
+      cancelText="Cancel"
       />
 
       {/* Add Product Button */}
@@ -195,16 +237,36 @@ const ProductsPage = () => {
         onAdd={handleAddProduct}
       />
 
+      {/* Snackbar alert component */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        sx={{
+          width: '400px',
+          border: '2px solid',
+          borderColor: (theme) => theme.palette.success.dark,
+          borderRadius: '4px',
+          boxShadow: 3,
+        }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+
+      {/* Page contents */}
       {products.length > 0 ? (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={{ marginBottom: '64px' }}>
           <Table>
           <TableHead>
               <TableRow>
                 <TableCell><strong>Product Name</strong></TableCell>
                 <TableCell><strong>Description</strong></TableCell>
-                <TableCell align="left"><strong>Price (£)</strong></TableCell>
+                <TableCell align="right"><strong>Price (£)</strong></TableCell>
                 {/* <TableCell align="center"></TableCell> */}
-                <TableCell align="left"><strong>Stock</strong></TableCell>
+                <TableCell align="right" sx={{ paddingRight: '64px' }}><strong>Stock</strong></TableCell>
                 <TableCell align="center"></TableCell> {/* Empty header for edit stock */}
                 <TableCell align="center"></TableCell> {/* Empty header for delete button */}
               </TableRow>
@@ -216,15 +278,39 @@ const ProductsPage = () => {
                   <TableCell>{product.name}</TableCell>
                   <TableCell>{product.description}</TableCell>
 
-                  <TableCell>
-                    {product.price}
+                  <TableCell align="right">
+                    {product.price.toFixed(2)}
                   </TableCell>
 
-                  <TableCell>
+                  <TableCell align="right" sx={{ paddingRight: '64px' }}>
                     {product.stock}
                   </TableCell>
 
-                  <TableCell align="center" sx={{ width: '56px' }}>
+                  <TableCell align="center" sx={{ width: '56px', padding: '0' }}>
+                    <Tooltip title="Update Price/Stock">
+                      <IconButton
+                        aria-label="edit-stock"
+                        color="primary"
+                        onClick={() => handleOpenUpdateProductDialog(product.productId, product.name)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+
+                  <TableCell align="center" sx={{ padding: '0' }}>
+                    <Tooltip title="Delete">
+                      <IconButton
+                        aria-label="delete"
+                        color="error"
+                        onClick={() => handleOpenDeleteProductDialog(product.productId, product.name)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+
+                  {/* <TableCell align="center" sx={{ width: '56px' }}>
                     <Tooltip title="Update Price/Stock">
                       <IconButton
                         aria-label="edit-stock"
@@ -246,7 +332,7 @@ const ProductsPage = () => {
                         <DeleteIcon />
                       </IconButton>
                     </Tooltip>
-                  </TableCell>
+                  </TableCell> */}
 
                 </TableRow>
               ))}
