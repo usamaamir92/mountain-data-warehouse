@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
 
-interface EditDialogProps {
+interface UpdateProductDialogProps {
   open: boolean;
   onClose: () => void;
   onConfirm: (values: { price?: number; stock?: number }) => void;
@@ -9,7 +9,7 @@ interface EditDialogProps {
   initialValues?: { price?: number; stock?: number };
 }
 
-const EditDialog: React.FC<EditDialogProps> = ({
+const UpdateProductDialog: React.FC<UpdateProductDialogProps> = ({
   open,
   onClose,
   onConfirm,
@@ -125,4 +125,4 @@ const EditDialog: React.FC<EditDialogProps> = ({
   );
 };
 
-export default EditDialog;
+export default UpdateProductDialog;

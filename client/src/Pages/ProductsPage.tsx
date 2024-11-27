@@ -10,24 +10,37 @@ import {
   Paper,
   Typography,
   IconButton,
-  Tooltip
+  Tooltip,
+  Fab
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ConfirmationDialog from '../Components/ConfirmationDialog';
+import UpdateProductDialog from '../Components/UpdateProductDialog';
+import DeleteProductDialog from '../Components/DeleteProductDialog';
+import AddProductDialog from '../Components/AddProductDialog';
 import EditIcon from '@mui/icons-material/Edit';
-import EditDialog from '../Components/EditDialog';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
-  const [open, setOpen] = useState(false);
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [updateProductDialogOpen, setUpdateProductDialogOpen] = useState(false);  
+  const [addProductDialogOpen, setAddProductDialogOpen] = useState(false);
+  
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  
   const [currentProductName, setCurrentProductName] = useState<string | null>(null);
   const [currentProductId, setCurrentProductId] = useState<string | null>(null);
-  const [currentProduct, setCurrentProduct] = useState<any>(null);
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    description: '',
+    price: '',
+    stock: '',
+  });
 
+  // Load Products on load
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -41,31 +54,16 @@ const ProductsPage = () => {
     fetchProducts();
   }, []);
 
-  const handleOpenDialog = (productId: string) => {
-    setSelectedProductId(productId);
-    setOpen(true);
-  };
-  
-  const handleCloseDialog = () => {
-    setOpen(false);
-    setSelectedProductId(null);
-  };
-  
-  const handleConfirmDelete = async () => {
-    if (selectedProductId) {
-      await handleDelete(selectedProductId); // Call your delete function
-    }
-    handleCloseDialog();
-  };
-
-  const handleOpenEditDialog = (productName: string, productId: string) => {
+  // Update product functions and modal
+  const handleOpenUpdateProductDialog = (productName: string, productId: string) => {
     setCurrentProductId(productId);
     setCurrentProductName(productName);
-    setEditDialogOpen(true);
+    setUpdateProductDialogOpen(true);
   };
   
-  const handleCloseEditDialog = () => {
-    setEditDialogOpen(false);
+
+  const handleCloseUpdateProductDialog = () => {
+    setUpdateProductDialogOpen(false);
 
     setTimeout(() => {
       setCurrentProductId(null);
@@ -73,7 +71,7 @@ const ProductsPage = () => {
     }, 300);
   };
   
-  const handleUpdate = async (values: { price?: number; stock?: number }) => {
+  const handleUpdateProduct = async (values: { price?: number; stock?: number }) => {
     if (!currentProductId) return;
   
     try {
@@ -94,9 +92,28 @@ const ProductsPage = () => {
       console.error('Error updating product:', error);
     }
   };
-  
 
-  const handleDelete = async (productId) => {
+  
+  // Delete product functions and modal
+  const handleOpenDeleteProductDialog = (productId: string) => {
+    setSelectedProductId(productId);
+    setDeleteDialogOpen(true);
+  };
+  
+  const handleCloseDeleteProductDialog = () => {
+    setDeleteDialogOpen(false);
+    setSelectedProductId(null);
+  };
+
+
+  const handleConfirmDeleteProduct = async () => {
+    if (selectedProductId) {
+      await handleDeleteProduct(selectedProductId); // Call your delete function
+    }
+    handleCloseDeleteProductDialog();
+  };
+  
+  const handleDeleteProduct = async (productId) => {
     try {
       await axios.delete(`${backendUrl}/products/${productId}`);
       // Remove the deleted product from the state
@@ -109,33 +126,74 @@ const ProductsPage = () => {
   };
 
 
+  // Add Product functions and modal
+  const handleOpenAddProductDialog = () => setAddProductDialogOpen(true);
+  const handleCloseAddProductDialog = () => setAddProductDialogOpen(false);
+
+  const handleAddProduct = async (product: { name: string; description: string; price: string; stock: string }) => {
+    const { name, description, price, stock } = product;
+  
+    // Here, we no longer need to do manual validation as it's handled by the AddProductDialog
+    try {
+      const response = await axios.post(`${backendUrl}/products`, {
+        name,
+        description,
+        price: parseFloat(price),
+        stock: parseInt(stock, 10),
+      });
+  
+      // Add the new product to the state
+      setProducts((prev) => [...prev, response.data]);
+  
+      // Close the dialog after adding the product
+      handleCloseAddProductDialog();
+    } catch (error) {
+      console.error('Error adding product:', error);
+    }
+  };
+  
+
   return (
     <div>
       <Typography variant="h4" gutterBottom>
         Products
       </Typography>
 
-      <ConfirmationDialog
-      open={open}
-      onClose={handleCloseDialog}
-      onConfirm={handleConfirmDelete}
+      <DeleteProductDialog
+      open={deleteDialogOpen}
+      onClose={handleCloseDeleteProductDialog}
+      onConfirm={handleConfirmDeleteProduct}
       title="Confirm Deletion"
       description="Are you sure you want to delete this product? This action cannot be undone."
       confirmText="Delete"
       cancelText="Cancel"
-    />
+      />
 
-    {/* Edit Dialog */}
-    <EditDialog
-      open={editDialogOpen}
-      onClose={handleCloseEditDialog}
-      onConfirm={(values) => handleUpdate(values)}
-      title={`Update ${currentProductName}`}
-      initialValues={{
-        price: products.find((p) => p.productId === currentProductId)?.price,
-        stock: products.find((p) => p.productId === currentProductId)?.stock,
-      }}
-    />
+      {/* Edit Dialog */}
+      <UpdateProductDialog
+        open={updateProductDialogOpen}
+        onClose={handleCloseUpdateProductDialog}
+        onConfirm={(values) => handleUpdateProduct(values)}
+        title={`Update ${currentProductName}`}
+        initialValues={{
+          price: products.find((p) => p.productId === currentProductId)?.price,
+          stock: products.find((p) => p.productId === currentProductId)?.stock,
+        }}
+      />
+
+      {/* Add Product Button */}
+      <Tooltip title="Add new product">
+        <Fab color="primary" aria-label="add" onClick={handleOpenAddProductDialog} style={{ position: 'fixed', bottom: 16, right: 16 }}>
+          <AddIcon />
+        </Fab>
+      </Tooltip>
+
+      {/* Add Product Dialog */}
+      <AddProductDialog
+        open={addProductDialogOpen}
+        onClose={handleCloseAddProductDialog}
+        onAdd={handleAddProduct}
+      />
 
       {products.length > 0 ? (
         <TableContainer component={Paper}>
@@ -171,7 +229,7 @@ const ProductsPage = () => {
                       <IconButton
                         aria-label="edit-stock"
                         color="primary"
-                        onClick={() => handleOpenEditDialog(product.name, product.productId)}
+                        onClick={() => handleOpenUpdateProductDialog(product.name, product.productId)}
                       >
                         <EditIcon />
                       </IconButton>
@@ -183,7 +241,7 @@ const ProductsPage = () => {
                       <IconButton
                         aria-label="delete"
                         color="error"
-                        onClick={() => handleOpenDialog(product.productId)}
+                        onClick={() => handleOpenDeleteProductDialog(product.productId)}
                       >
                         <DeleteIcon />
                       </IconButton>

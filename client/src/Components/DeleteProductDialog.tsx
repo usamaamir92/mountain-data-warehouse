@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 
-interface ConfirmationDialogProps {
+interface DeleteProductDialogProps {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
@@ -11,7 +11,7 @@ interface ConfirmationDialogProps {
   cancelText?: string;
 }
 
-const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
+const DeleteProductDialog: React.FC<DeleteProductDialogProps> = ({
   open,
   onClose,
   onConfirm,
@@ -45,4 +45,4 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   );
 };
 
-export default ConfirmationDialog;
+export default DeleteProductDialog;
