@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Box, CssBaseline, Drawer, List, ListItem, ListItemText, AppBar, Toolbar, Typography, Divider } from '@mui/material';
+import { Box, CssBaseline, Drawer, List, ListItem, ListItemText, AppBar, Toolbar, Typography, Divider, ListItemButton } from '@mui/material';
 import ProductsPage from './Pages/ProductsPage';
 import OrdersPage from './Pages/OrdersPage';
 
@@ -50,12 +50,12 @@ function App() {
         
         <Box sx={{ overflow: 'auto' }}>
           <List>
-            <ListItem button component={Link} to="/products">
+            <ListItemButton component={Link} to="/products">
               <ListItemText primary="Products" />
-            </ListItem>
-            <ListItem button component={Link} to="/orders">
+            </ListItemButton>
+            <ListItemButton component={Link} to="/orders">
               <ListItemText primary="Orders" />
-            </ListItem>
+            </ListItemButton>
           </List>
         </Box>
         </Drawer>
