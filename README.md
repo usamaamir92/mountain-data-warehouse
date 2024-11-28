@@ -102,7 +102,7 @@ cd mountain-data-warehouse
 
 This project is licensed under the MIT License (LICENSE).
 
-## Architecture and Design Decisions
+## Architecture, Design Decisions and Limitations
 
 ### Backend Design Decisions
 
@@ -153,9 +153,6 @@ This project is licensed under the MIT License (LICENSE).
   
 #### User Feedback
 - **Snackbar Notifications (MUI version of Toast)** are used to display success and error messages to users, ensuring clear feedback for actions with API interactions.
-
-
-## Limitations and Known Issues
 
 
 
