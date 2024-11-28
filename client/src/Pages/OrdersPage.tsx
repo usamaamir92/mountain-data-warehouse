@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -16,42 +15,18 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import AddOrderDialog from '../Components/AddOrderDIalog';
+import useOrderStore from '../Store/useOrderStore';
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const OrdersPage = () => {
-  const [orders, setOrders] = useState<any[]>([]); // Orders state
+  const { orders } = useOrderStore();
 
   const [addOrderDialogOpen, setAddOrderDialogOpen] = useState(false);
-  const [availableProducts, setAvailableProducts] = useState<{ productId: string, name: string }[]>([]);
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
-  // Load Orders on load
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await axios.get(`${backendUrl}/orders`);
-        setOrders(response.data);
-      } catch (error) {
-        console.error('Error fetching orders:', error);
-      }
-    };
-
-    fetchOrders();
-
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(`${backendUrl}/products`);
-        setAvailableProducts(response.data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
-    fetchProducts();
-  }, []);
 
   // Function to close snackbar alerts
   const handleCloseSnackbar = () => {
@@ -62,21 +37,6 @@ const OrdersPage = () => {
   const handleOpenAddOrderDialog = () => setAddOrderDialogOpen(true);
   const handleCloseAddOrderDialog = () => setAddOrderDialogOpen(false);
 
-  const handleAddOrder = async (order: { products: { productId: string, quantity: number }[] }) => {
-    try {
-      const response = await axios.post(`${backendUrl}/orders`, order);
-      setOrders((prev) => [...prev, response.data]);
-      handleCloseAddOrderDialog();
-    } catch (error) {
-      console.error('Error adding order:', error);
-    }
-  };
-
-  // The onAdd function passed to AddOrderDialog will update the orders state
-  // const handleAddOrder = (order: { products: { productId: string, quantity: number }[] }) => {
-  //   setOrders((prev) => [...prev, order]); // Update orders with the new order
-  // };
-
   return (
     <div>
       <Typography variant="h4" gutterBottom>
@@ -86,8 +46,6 @@ const OrdersPage = () => {
       <AddOrderDialog
         open={addOrderDialogOpen}
         onClose={handleCloseAddOrderDialog}
-        onAdd={handleAddOrder}
-        availableProducts={availableProducts}
       />
 
       {/* Add Order Button */}

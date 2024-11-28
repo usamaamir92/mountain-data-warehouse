@@ -23,11 +23,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import useProductStore from '../Store/useProductStore';
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const ProductsPage = () => {
   // Use Zustand store for products
-  const { products, setProducts } = useProductStore();
+  const { products } = useProductStore();
 
   const [deleteProductDialogOpen, setDeleteProductDialogOpen] = useState(false);
   const [updateProductDialogOpen, setUpdateProductDialogOpen] = useState(false);  
@@ -39,21 +38,6 @@ const ProductsPage = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
-
-
-  // Load Products on load
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(`${backendUrl}/products`);
-        setProducts(response.data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
-
-    fetchProducts();
-  }, [setProducts]);
 
   // Function to close snackbar alerts
   const handleCloseSnackbar = () => {
@@ -92,12 +76,10 @@ const ProductsPage = () => {
     }, 300);
   };  
 
-
   // Add Product functions and modal
   const handleOpenAddProductDialog = () => setAddProductDialogOpen(true);
   const handleCloseAddProductDialog = () => setAddProductDialogOpen(false);
   
-
   return (
     <div>
       <Typography variant="h4" gutterBottom>

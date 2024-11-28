@@ -18,27 +18,35 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
+import useOrderStore from '../Store/useOrderStore';
+import useProductStore from '../Store/useProductStore';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 interface AddOrderDialogProps {
   open: boolean;
   onClose: () => void;
-  onAdd: (order: { products: { productId: string, quantity: number }[] }) => void;
-  availableProducts: { productId: string, name: string }[];
 }
 
-const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose, onAdd, availableProducts }) => {
+const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose }) => {
+    const { addOrder } = useOrderStore();
+    const { products } = useProductStore();
+
+    const [availableProducts, setAvailableProducts] = useState<any[]>([]);
+
     const [orderProducts, setOrderProducts] = useState<{ productId: string; name: string; quantity: number }[]>([{ productId: '', name: '', quantity: 1 }]);
     const [errors, setErrors] = useState<{ productId: string; quantity: string }[]>([{ productId: '', quantity: '' }]);
+    
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
+
     useEffect(() => {
-        console.log("Updated order products: ", orderProducts);
-      }, [orderProducts]); // This effect will run whenever orderProducts changes
-      
+      setAvailableProducts(products);
+    }, [products]);
+
+    console.log("productsss", products)
   
     const handleAddProduct = () => {
       setOrderProducts([...orderProducts, { productId: '', name: '', quantity: 1 }]);
@@ -109,15 +117,16 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose, onAdd, a
   
           try {
             // Send POST request using axios
-            await axios.post(`${backendUrl}/orders`, requestData);
+            const response = await axios.post(`${backendUrl}/orders`, requestData);
+
+            const createdOrder = response.data;
   
             setSnackbarMessage('Order successfully created.');
             setSnackbarSeverity('success');
             setSnackbarOpen(true);
 
-            // CHECKKK
-            onAdd({ products: requestData });
-            onClose();
+            // Update global orders state
+            addOrder(createdOrder);
           } catch (error) {
             console.log("Post request error: ", error)
             const errorMessage = error.response.data.message;
@@ -125,6 +134,8 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose, onAdd, a
             setSnackbarSeverity('error');
             setSnackbarOpen(true);
           }
+
+          onClose();
         }
     };
   

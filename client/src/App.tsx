@@ -1,12 +1,43 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Box, CssBaseline, Drawer, List, ListItem, ListItemText, AppBar, Toolbar, Typography, Divider, ListItemButton } from '@mui/material';
+import { Box, CssBaseline, Drawer, List, ListItemText, AppBar, Toolbar, Typography, ListItemButton } from '@mui/material';
 import ProductsPage from './Pages/ProductsPage';
 import OrdersPage from './Pages/OrdersPage';
+import useProductStore from './Store/useProductStore';
+import useOrderStore from './Store/useOrderStore';
+import axios from 'axios';
 
 const drawerWidth = 240;
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function App() {
+  // Fetch products and orders at app level and save to global storage
+  const { setProducts } = useProductStore();
+  const { setOrders } = useOrderStore();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(`${backendUrl}/products`);
+        setProducts(response.data); // Store products globally
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+  
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get(`${backendUrl}/orders`);
+        setOrders(response.data); // Store orders globally
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      }
+    };
+  
+    fetchProducts();
+    fetchOrders();
+  }, []);
+
   return (
     <Router>
       <Box
