@@ -19,8 +19,6 @@ This repository contains a full-stack web application for a product and order ma
 
 - **Product Management**: Add, update, and fetch product details.
 - **Order Management**: Create and view orders with associated products.
-- **Database**: SQL Server database with automatic migrations and seeding.
-- **Cross-Origin Resource Sharing (CORS)**: Configured to allow requests from the frontend.
 
 
 ## Prerequisites
@@ -93,7 +91,7 @@ cd mountain-data-warehouse
 - Port Conflicts: Verify that no other applications are running on http://localhost:5130 or http://localhost:5173.
 
 
-License
+### License
 
 This project is licensed under the MIT License (LICENSE).
 
