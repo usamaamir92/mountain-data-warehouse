@@ -123,7 +123,7 @@ This project is licensed under the MIT License (LICENSE).
 
 #### Database Design
 - **Normalization**: The `Orders` table doesn't fully match the requested schema (no Product column). Instead, a join table has been used to link Products and Orders via a many-to-many relationship. This was done to provide better flexibility, scalability, and to allow more efficient joins/queries (e.g. preventing product duplication in the orders table, verifying that a given product in an order actually exists in the products table).
-- **Price at Time of Sale**: The product price is stored separately in the order to maintain the price at the time of sale, preventing price changes from altering historical order data.
+- **Price at Time of Sale**: The product price is stored separately in the order (i.e. not linked directly to Product.Price) to maintain the price at the time of sale, preventing price changes from altering historical order data.
 
 #### Input Validation
 - **Minimal Input Validation**: Validation of request data to endpoints has minimal error handling, in the interest of time. Assumed that frontend validation would catch most issues but given more time, methods could be added to validate request data and return more specific errors, handle edge cases or malicious input that might not be caught on the frontend.
