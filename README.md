@@ -107,7 +107,7 @@ This project is licensed under the MIT License (LICENSE).
 ### Backend Design Decisions
 
 #### Framework Choice
-- **ASP.NET Core Web API** was chosen over MVC as it is more lightweight, less overhead, and focused on returning data to the frontend, making it ideal for RESTful APIs without server-side rendering.
+- **ASP.NET Core Web API** was chosen over MVC as it is more lightweight, has less overhead, and focused on returning data to the frontend, making it ideal for RESTful APIs without server-side rendering.
 
 #### API Design
 - **RESTful Architecture** was adopted with controller and service layer architecture to promote separation of concerns, maintainability, and scalability.
@@ -118,8 +118,8 @@ This project is licensed under the MIT License (LICENSE).
   - **Scalability**: Future enhancements or validations can be added to the controller without complicating the service layer.
   - **Robustness**: Early error handling reduces unnecessary database queries and ensures clearer API responses.
 
-#### UUID for IDs
-- **UUID** is used for `orderID` and `productID` to ensure unique keys for each item, ensuring no identification conflicts.
+#### GUID for IDs
+- **GUID** is used for `orderID` and `productID` to ensure unique keys for each item, ensuring no identification conflicts.
 
 #### Database Design
 - **Normalization**: The `Orders` table doesn't fully match the requested schema (no Product column). Instead, a join table has been used to link Products and Orders via a many-to-many relationship. This was done to provide better flexibility, scalability, and to allow more efficient joins/queries (e.g. preventing product duplication in the orders table, verifying that a given product in an order actually exists in the products table).
