@@ -15,6 +15,7 @@ import {
     IconButton,
     Box,
     Tooltip,
+    SelectChangeEvent,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
@@ -62,9 +63,10 @@ const AddOrderDialog = ({ open, onClose }: AddOrderDialogProps) => {
       setErrors(newErrors);
     };
   
-    const handleChange = (index: number, field: keyof typeof orderProducts[0]) => (event: React.ChangeEvent<{ value: unknown }>) => {
+    // const handleChange = (index: number, field: keyof typeof orderProducts[0]) => (event: React.ChangeEvent<{ value: unknown }>) => {
+    const handleChange = (index: number, field: keyof typeof orderProducts[0]) => (event: SelectChangeEvent<string>) => {
         const updatedProducts = [...orderProducts];
-        const selectedProductId = event.target.value as string;
+        const selectedProductId = event.target.value;
     
         // If the field being updated is productId, update the productId and reset quantity to 1, and also set the product name
         if (field === 'productId') {
