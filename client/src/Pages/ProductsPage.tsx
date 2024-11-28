@@ -33,9 +33,6 @@ const ProductsPage = () => {
   
   const [selectedProductName, setSelectedProductName] = useState<string | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
-  
-  const [currentProductName, setCurrentProductName] = useState<string | null>(null);
-  const [currentProductId, setCurrentProductId] = useState<string | null>(null);
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -63,8 +60,8 @@ const ProductsPage = () => {
   
   // Update product functions and modal
   const handleOpenUpdateProductDialog = (productId: string, productName: string) => {
-    setCurrentProductId(productId);
-    setCurrentProductName(productName);
+    setSelectedProductId(productId);
+    setSelectedProductName(productName);
     setUpdateProductDialogOpen(true);
   };
   
@@ -72,43 +69,10 @@ const ProductsPage = () => {
     setUpdateProductDialogOpen(false);
 
     setTimeout(() => {
-      setCurrentProductId(null);
-      setCurrentProductName(null);    
+      setSelectedProductId(null);
+      setSelectedProductName(null);    
     }, 300);
   };
-  
-  const handleUpdateProduct = async (values: { price?: number; stock?: number }) => {
-    if (!currentProductId) return;
-  
-    try {
-      // Send the update to the backend
-      await axios.patch(`${backendUrl}/products/${currentProductId}`, values);
-  
-      // Update the local state
-      setProducts((prevProducts) =>
-        prevProducts.map((product) =>
-          product.productId === currentProductId
-            ? { ...product, ...values } // Merge updated values with the existing product
-            : product
-        )
-      );
-
-      // Show success alert
-      setSnackbarMessage(`${currentProductName} successfully updated.`);
-      setSnackbarSeverity('success');
-      setSnackbarOpen(true);
-  
-      console.log(`Updated product ${currentProductId}:`, values);
-    } catch (error) {
-      console.error('Error updating product:', error);
-
-      // Show error alert
-      setSnackbarMessage(`Error updating ${currentProductName}. Please try again.`);
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
-    }
-  };
-
   
   // Delete product functions and modal
   const handleOpenDeleteProductDialog = (productId: string, productName: string) => {
@@ -124,36 +88,7 @@ const ProductsPage = () => {
       setSelectedProductId(null);
       setSelectedProductName(null);  
     }, 300);
-  };
-
-  const handleConfirmDeleteProduct = async () => {
-    if (selectedProductId) {
-      await handleDeleteProduct(selectedProductId); // Call your delete function
-    }
-    handleCloseDeleteProductDialog();
-  };
-  
-  const handleDeleteProduct = async (productId) => {
-    try {
-      await axios.delete(`${backendUrl}/products/${productId}`);
-      // Remove the deleted product from the state
-      setProducts((prevProducts) =>
-        prevProducts.filter((product) => product.productId !== productId)
-      );
-
-      // Show success alert
-      setSnackbarMessage(`${currentProductName} deleted successfully.`);
-      setSnackbarSeverity('success');
-      setSnackbarOpen(true);
-    } catch (error) {
-      console.error('Error deleting product:', error);
-
-      // Show error alert
-      setSnackbarMessage(`Error deleting ${currentProductName}. Please try again.`);
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
-    }
-  };
+  };  
 
 
   // Add Product functions and modal
@@ -203,11 +138,12 @@ const ProductsPage = () => {
       <UpdateProductDialog
         open={updateProductDialogOpen}
         onClose={handleCloseUpdateProductDialog}
-        onConfirm={(values) => handleUpdateProduct(values)}
-        title={`Update ${currentProductName}`}
+        // onConfirm={(values) => handleUpdateProduct(values)}
+        productId={selectedProductId}
+        productName={selectedProductName}
         initialValues={{
-          price: products.find((p) => p.productId === currentProductId)?.price,
-          stock: products.find((p) => p.productId === currentProductId)?.stock,
+          price: products.find((p) => p.productId === selectedProductId)?.price,
+          stock: products.find((p) => p.productId === selectedProductId)?.stock,
         }}
       />
 
@@ -215,11 +151,8 @@ const ProductsPage = () => {
       <DeleteProductDialog
       open={deleteProductDialogOpen}
       onClose={handleCloseDeleteProductDialog}
-      onConfirm={handleConfirmDeleteProduct}
-      title="Confirm Deletion"
-      description={`Are you sure you want to delete ${selectedProductName}? This action cannot be undone.`}
-      confirmText="Delete"
-      cancelText="Cancel"
+      productId={selectedProductId}
+      productName={selectedProductName}
       />
 
       {/* Add Product Button */}
@@ -308,31 +241,6 @@ const ProductsPage = () => {
                       </IconButton>
                     </Tooltip>
                   </TableCell>
-
-                  {/* <TableCell align="center" sx={{ width: '56px' }}>
-                    <Tooltip title="Update Price/Stock">
-                      <IconButton
-                        aria-label="edit-stock"
-                        color="primary"
-                        onClick={() => handleOpenUpdateProductDialog(product.name, product.productId)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                  
-                  <TableCell align="center">
-                    <Tooltip title="Delete">
-                      <IconButton
-                        aria-label="delete"
-                        color="error"
-                        onClick={() => handleOpenDeleteProductDialog(product.productId)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell> */}
-
                 </TableRow>
               ))}
             </TableBody>

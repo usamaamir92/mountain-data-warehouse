@@ -15,7 +15,6 @@ import {
     IconButton,
     Box,
     Tooltip,
-    responsiveFontSizes
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
@@ -107,32 +106,19 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose, onAdd, a
               quantity: product.quantity,
             })),
           };
-
-          console.log("request data: ", requestData);
   
           try {
             // Send POST request using axios
-            const response = await axios.post(`${backendUrl}/orders`, requestData);
+            await axios.post(`${backendUrl}/orders`, requestData);
   
-            if (response.status === 201) {
-              // On success, show success message
-              setSnackbarMessage('Order successfully created.');
-              setSnackbarSeverity('success');
-              setSnackbarOpen(true);
+            setSnackbarMessage('Order successfully created.');
+            setSnackbarSeverity('success');
+            setSnackbarOpen(true);
 
-              // Delay closing the dialog to allow the snackbar to be visible
-              setTimeout(() => {
-                  onAdd({ products: requestData });
-                  onClose();
-              }, 300); // Set the delay time to match your snackbar duration (3000ms)
-            } else {
-              // On error, show error message
-              setSnackbarMessage(`Error creating order: ${response.data.message || 'Unknown error'}`);
-              setSnackbarSeverity('error');
-              setSnackbarOpen(true);
-            }
+            // CHECKKK
+            onAdd({ products: requestData });
+            onClose();
           } catch (error) {
-            // Handle axios error
             console.log("Post request error: ", error)
             const errorMessage = error.response.data.message;
             setSnackbarMessage(`Error creating order: ${errorMessage}`);
