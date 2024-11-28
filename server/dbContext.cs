@@ -94,6 +94,9 @@ namespace server
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1.")]
         public required int Quantity { get; set; }
+        [Required]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0.")]
+        public required decimal PriceAtTimeOfSale { get; set; }
     }
 
     // Request model for creating a new Product (POST /products) 

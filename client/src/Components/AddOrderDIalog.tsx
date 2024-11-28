@@ -143,6 +143,7 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose, onAdd, a
     };
   
     return (
+        <>
       <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
         <DialogTitle>Create New Order</DialogTitle>
         <DialogContent>
@@ -233,19 +234,20 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose, onAdd, a
             Add Order
           </Button>
         </DialogActions>
-  
+      </Dialog>
+
         {/* Snackbar */}
         <Snackbar 
-          open={snackbarOpen} 
-          autoHideDuration={3000} 
-          onClose={() => setSnackbarOpen(false)}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            open={snackbarOpen} 
+            autoHideDuration={3000} 
+            onClose={() => setSnackbarOpen(false)}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
-          <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
+            <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
             {snackbarMessage}
-          </Alert>
+            </Alert>
         </Snackbar>
-      </Dialog>
+        </>
     );
   };
   

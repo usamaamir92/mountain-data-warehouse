@@ -26,7 +26,7 @@ namespace server.Services
                             ProductId = op.ProductId,
                             Name = op.Product.Name,
                             Description = op.Product.Description,
-                            Price = op.Product.Price,
+                            Price = op.PriceAtTimeOfSale,
                             Quantity = op.Quantity
                         }).ToList()
                     }).ToListAsync();
@@ -86,7 +86,8 @@ namespace server.Services
                         Order = order,
                         ProductId = product.ProductId,
                         Product = product,
-                        Quantity = reqProduct.Quantity
+                        Quantity = reqProduct.Quantity,
+                        PriceAtTimeOfSale = product.Price // Price saved as PriceAtTimeOfSale to ensure correctness in case of future product price changes
                     });
                 }
 
@@ -109,7 +110,7 @@ namespace server.Services
                         ProductId = op.ProductId,
                         Name = op.Product.Name,
                         Description = op.Product.Description,
-                        Price = op.Product.Price,
+                        Price = op.PriceAtTimeOfSale,
                         Quantity = op.Quantity
                     }).ToList()
                 };
@@ -147,7 +148,7 @@ namespace server.Services
                         ProductId = op.ProductId,
                         Name = op.Product.Name,
                         Description = op.Product.Description,
-                        Price = op.Product.Price,
+                        Price = op.PriceAtTimeOfSale,
                         Quantity = op.Quantity
                     }).ToList()
                 };
