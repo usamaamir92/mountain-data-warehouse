@@ -21,11 +21,13 @@ import AddProductDialog from '../Components/AddProductDialog';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
+import useProductStore from '../Store/useProductStore';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const ProductsPage = () => {
-  const [products, setProducts] = useState([]);
+  // Use Zustand store for products
+  const { products, setProducts } = useProductStore();
 
   const [deleteProductDialogOpen, setDeleteProductDialogOpen] = useState(false);
   const [updateProductDialogOpen, setUpdateProductDialogOpen] = useState(false);  
@@ -51,7 +53,7 @@ const ProductsPage = () => {
     };
 
     fetchProducts();
-  }, []);
+  }, [setProducts]);
 
   // Function to close snackbar alerts
   const handleCloseSnackbar = () => {

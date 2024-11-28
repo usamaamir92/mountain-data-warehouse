@@ -10,6 +10,7 @@ import {
   Alert 
 } from '@mui/material';
 import axios from 'axios';
+import useProductStore from '../Store/useProductStore';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -21,6 +22,8 @@ interface DeleteProductDialogProps {
 }
 
 const DeleteProductDialog: React.FC<DeleteProductDialogProps> = ({ open, onClose, productId, productName }) => {
+  const { deleteProduct } = useProductStore();
+  
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
@@ -35,6 +38,9 @@ const DeleteProductDialog: React.FC<DeleteProductDialogProps> = ({ open, onClose
       // Show success snackbar message
       setSnackbarMessage('Product deleted successfully');
       setSnackbarSeverity('success');
+
+      // Remove deleted product from global store
+      deleteProduct(productId);
     } catch (error) {
       // Handle error and show error snackbar message
       setSnackbarMessage('Error deleting product');

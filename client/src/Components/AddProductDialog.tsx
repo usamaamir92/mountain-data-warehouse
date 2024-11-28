@@ -10,6 +10,7 @@ import {
   Alert
 } from '@mui/material';
 import axios from 'axios';
+import useProductStore from '../Store/useProductStore';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -19,6 +20,8 @@ interface AddProductDialogProps {
 }
 
 const AddProductDialog: React.FC<AddProductDialogProps> = ({ open, onClose }) => {
+  const { addProduct } = useProductStore();
+
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
@@ -88,13 +91,17 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({ open, onClose }) =>
           stock: parseInt(stock, 10),
         });
 
+        const createdProduct = response.data;
+
         // Show success alert
         setSnackbarMessage(`${name} successfully added.`);
         setSnackbarSeverity('success');
         setSnackbarOpen(true);
+
+        console.log("Add product response: ", response)
     
         // Add the new product to the global state
-        // setProducts((prev) => [...prev, response.data]);
+        addProduct(createdProduct);
       } catch (error) {
         console.error('Error adding product:', error);
 

@@ -10,6 +10,7 @@ import {
   Alert
 } from '@mui/material';
 import axios from 'axios';
+import useProductStore from '../Store/useProductStore';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -28,6 +29,8 @@ const UpdateProductDialog: React.FC<UpdateProductDialogProps> = ({
   productName,
   initialValues = {},
 }) => {
+  const { updateProduct } = useProductStore();
+
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
@@ -101,21 +104,16 @@ const UpdateProductDialog: React.FC<UpdateProductDialogProps> = ({
     
       try {
         // Send the update to the backend
-        await axios.patch(`${backendUrl}/products/${productId}`, values);
-    
-        // Update the global state when zustand set up
-        // setProducts((prevProducts) =>
-        //   prevProducts.map((product) =>
-        //     product.productId === selectedProductId
-        //       ? { ...product, ...values } // Merge updated values with the existing product
-        //       : product
-        //   )
-        // );
+        const response = await axios.patch(`${backendUrl}/products/${productId}`, values);
+
+        const updatedProduct = response.data;
 
         // Show success alert
         setSnackbarMessage(`${productName} successfully updated.`);
         setSnackbarSeverity('success');  
-        console.log(`Updated product ${productId}:`, values);
+    
+        // Update the global state when zustand set up
+        updateProduct(updatedProduct);
       } catch (error) {
         console.error('Error updating product:', error);
 
