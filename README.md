@@ -38,59 +38,56 @@ This repository contains a full-stack web application for a product and order ma
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/usamaamir92/mountain-data-warehouse.git
+git clone https://github.com/usamaamir92/mountain-data-warehouse
 cd mountain-data-warehouse
 ```
 
 ### 2. Backend Setup
-#### 1. Navigate to the `server` directory:
+#### Navigate to the `server` directory:
 ```bash
    cd server
 ```
-#### 2. Install Dependencies:
+#### Install Dependencies:
 ```bash
    dotnet restore
 ```
-#### 3. Set Up Environment Variables:
+#### Set Up Environment Variables:
    - Create a `.env` file in the `server` directory (already included in the repo for development):
 ```bash
      FRONTEND_URL=http://localhost:5173
      DATABASE_SERVER=.\SQLEXPRESS
      DATABASE_NAME=MountainDataWarehouse
 ```
-#### 4. Run the Application:
+#### Run the Application:
    - Apply migrations and seed the database automatically on startup.
 ```bash
    dotnet run
 ```
    The backend server will start at http://localhost:5130.
+   Once the backend is running, you can access the Swagger UI for API documentation at:
+   http://localhost:5130/swagger
 
 
 ### 3. Frontend Setup
-#### 1. Navigate to the `client` directory:
+#### Navigate to the `client` directory:
 ```bash
    cd client
 ```
-#### 2. Install Dependencies:
+#### Install Dependencies:
 ```bash
    npm install
 ```
-#### 3. Set Up Environment Variables:
+#### Set Up Environment Variables:
 ```bash
    - Create a `.env` file in the `client` directory (already included in the repo for development):
      VITE_BACKEND_URL=http://localhost:5130
 ```
-#### 4. Run the Application:
+#### Run the Application:
 ```bash
    npm run dev
 ```
    The frontend will be available at http://localhost:5173.
 
-
-API Documentation
-
-- Once the backend is running, you can access the Swagger UI for API documentation at:
-  http://localhost:5130/swagger
 
 
 Troubleshooting
