@@ -6,22 +6,38 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace server.Migrations
 {
     /// <inheritdoc />
-    public partial class OrderProductRelation : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Products_Orders_OrderId",
-                table: "Products");
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TotalAmount = table.Column<decimal>(type: "decimal(19,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.OrderId);
+                });
 
-            migrationBuilder.DropIndex(
-                name: "IX_Products_OrderId",
-                table: "Products");
-
-            migrationBuilder.DropColumn(
-                name: "OrderId",
-                table: "Products");
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(19,2)", nullable: false),
+                    Stock = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.ProductId);
+                });
 
             migrationBuilder.CreateTable(
                 name: "OrderProducts",
@@ -29,7 +45,8 @@ namespace server.Migrations
                 {
                     OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false)
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    PriceAtTimeOfSale = table.Column<decimal>(type: "decimal(19,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -60,23 +77,11 @@ namespace server.Migrations
             migrationBuilder.DropTable(
                 name: "OrderProducts");
 
-            migrationBuilder.AddColumn<Guid>(
-                name: "OrderId",
-                table: "Products",
-                type: "uniqueidentifier",
-                nullable: true);
+            migrationBuilder.DropTable(
+                name: "Orders");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Products_OrderId",
-                table: "Products",
-                column: "OrderId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Products_Orders_OrderId",
-                table: "Products",
-                column: "OrderId",
-                principalTable: "Orders",
-                principalColumn: "OrderId");
+            migrationBuilder.DropTable(
+                name: "Products");
         }
     }
 }

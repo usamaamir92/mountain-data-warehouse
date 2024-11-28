@@ -30,6 +30,10 @@ namespace server
             .Property(o => o.TotalAmount)
             .HasColumnType("decimal(19,2)");
 
+            modelBuilder.Entity<OrderProduct>()
+            .Property(op => op.PriceAtTimeOfSale)
+            .HasColumnType("decimal(19,2)");
+
             // Configure many-to-many relationship using the join table
             modelBuilder.Entity<OrderProduct>()
                 .HasKey(op => new { op.OrderId, op.ProductId });

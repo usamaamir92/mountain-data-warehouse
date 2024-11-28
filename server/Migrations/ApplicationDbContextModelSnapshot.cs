@@ -48,7 +48,7 @@ namespace server.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("PriceAtTimeOfSale")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(19,2)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");

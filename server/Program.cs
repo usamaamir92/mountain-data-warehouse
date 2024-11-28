@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using server;
 using server.Services;
+using server.Database;
 using DotNetEnv;
 
 Env.Load();
@@ -17,13 +18,17 @@ builder.Services.AddLogging(logging =>
 });
 
 
-// Add DbContext with SQL Server configuration
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-        //    .EnableSensitiveDataLogging()
-        //    .LogTo(Console.WriteLine, LogLevel.Information));
+// Compile database connection string using environment variables and add DbContext
+var serverName = Environment.GetEnvironmentVariable("DATABASE_SERVER");
+var databaseName = Environment.GetEnvironmentVariable("DATABASE_NAME");
 
-// Define the CORS policy
+var connectionString = $"Server={serverName};Database={databaseName};Integrated Security=True;TrustServerCertificate=True;";
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
+
+// Define the CORS policy to allow frontend to send requests
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL");
@@ -45,9 +50,10 @@ builder.Services.AddCors(options =>
         });
 });
 
-// Add the ProductService
+// Add the ProductService and OrderService
 builder.Services.AddScoped<ProductsService>();
 builder.Services.AddScoped<OrdersService>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -56,11 +62,20 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Apply migrations automatically on startup
+// Apply migrations automatically on startup to ensure DB is created
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.Migrate();
+    try
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        dbContext.Database.Migrate();
+        DbSeeder.Seed(dbContext);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"An error occurred during database migration or seeding: {ex.Message}");
+        throw;
+    }
 }
 
 // Configure the HTTP request pipeline.
