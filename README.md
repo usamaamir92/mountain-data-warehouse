@@ -21,15 +21,14 @@ This repository contains a full-stack web application for a product and order ma
 - **Order Management**: Create and view orders with associated products.
 
 
-## Prerequisites
+## Intructions to run locally
+### Prerequisites
 
    - [.NET 6 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
    - [SQL Server](https://www.microsoft.com/en-us/sql-server)
    - [Node.js](https://nodejs.org/)
    - [npm](https://www.npmjs.com/)
 
-
-## Intructions to run locally
 
 ### 1. Clone the Repository
 ```bash
