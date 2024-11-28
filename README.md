@@ -152,7 +152,7 @@ This project is licensed under the MIT License (LICENSE).
 - The app uses **Material UI** for ready made responsive design components and provide a modern, consistent UI.
   
 #### User Feedback
-**Snackbar Notifications (MUI version of Toast)** are used to display success and error messages to users, ensuring clear feedback for actions with API interactions.
+- **Snackbar Notifications (MUI version of Toast)** are used to display success and error messages to users, ensuring clear feedback for actions with API interactions.
 - 
 
 ## Limitations and Known Issues
