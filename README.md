@@ -41,10 +41,12 @@ cd mountain-data-warehouse
 ```bash
    cd server
 ```
+
 #### Install Dependencies:
 ```bash
    dotnet restore
 ```
+
 #### Set Up Environment Variables:
    - Create a `.env` file in the `server` directory:
 ```bash
@@ -52,11 +54,13 @@ cd mountain-data-warehouse
      DATABASE_SERVER=.\SQLEXPRESS
      DATABASE_NAME=MountainDataWarehouse
 ```
+
 #### Run the Application:
    - Apply migrations and seed the database automatically on startup.
 ```bash
    dotnet run
 ```
+
    The backend server will start at http://localhost:5130.
    
    Once the backend is running, you can access the Swagger UI for API documentation at:
@@ -68,15 +72,18 @@ cd mountain-data-warehouse
 ```bash
    cd client
 ```
+
 #### Install Dependencies:
 ```bash
    npm install
 ```
+
 #### Set Up Environment Variables:
+   - Create a `.env` file in the `client` directory:
 ```bash
-   - Create a `.env` file in the `client`:
      VITE_BACKEND_URL=http://localhost:5130
 ```
+
 #### Run the Application:
 ```bash
    npm run dev
