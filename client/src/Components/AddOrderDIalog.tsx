@@ -86,21 +86,21 @@ const AddOrderDialog = ({ open, onClose }: AddOrderDialogProps) => {
       setErrors(updatedErrors);
     };
   
-      const handleQuantityChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-          const updatedProducts = [...orderProducts];
-          updatedProducts[index] = {
-            ...updatedProducts[index],
-            quantity: parseInt(event.target.value, 10),
-          };
-      
-          // Set the state with the updated quantity
-          setOrderProducts(updatedProducts);
-      
-          // Clear the quantity error
-          const updatedErrors = [...errors];
-          updatedErrors[index] = { productId: '', quantity: '' };
-          setErrors(updatedErrors);
-      };
+    const handleQuantityChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        const updatedProducts = [...orderProducts];
+        updatedProducts[index] = {
+          ...updatedProducts[index],
+          quantity: parseInt(event.target.value, 10),
+        };
+    
+        // Set the state with the updated quantity
+        setOrderProducts(updatedProducts);
+    
+        // Clear the quantity error
+        const updatedErrors = [...errors];
+        updatedErrors[index] = { productId: '', quantity: '' };
+        setErrors(updatedErrors);
+    };
   
     
     // Form validation pre-submission to check for empty/disallowed inputs

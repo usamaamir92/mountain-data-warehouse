@@ -126,6 +126,9 @@ To run the tests for this project, follow the steps below:
 #### API Design
 - **RESTful Architecture** was adopted with controller and service layer architecture to promote separation of concerns, maintainability, and scalability.
 
+#### Database interaction
+- **Entity Framework Core**  was chosen for its ease of use, automatic object-relational mapping, and support for database migrations making it ideal for simple CRUD operations, over a lower-level solution like Dapper.
+
 #### Controllers and Services
 - **Controllers** handle model/request validation and routing, while **services** contain the business logic and database interaction. This design offers:
   - **Testability**: Easy to unit test individual components.
@@ -172,32 +175,73 @@ To run the tests for this project, follow the steps below:
 
 #### Backend Tests
 
-The backend is unit tested using **xUnit** and EF's **in-memory database** for mocking dependencies. The current tests focus on basic functionality such as:
+The backend is unit tested using **xUnit** and EF's **in-memory database** for mocking dependencies. The tests focus on basic functionality such as:
 
 - **Product Service**: Ensures the ability to create, update, and fetch products.
 - **Order Service**: Verifies order creation and handling.
 
 The tests focus on isolated business logic in the service layer without needing to interact with the full database or external dependencies. The **in-memory database** is used for simulating database interactions, allowing the tests to run quickly and independently.
 
-While these unit tests cover the primary use cases, they are limited in scope. There is room to expand the tests to cover additional edge cases, such as:
-
-- Handling invalid data.
-- Simulating failures (e.g., database errors, network issues).
-- Validating input more rigorously.
-- Asserting for different exception types.
-
-With more time, additional tests could be added to increase the coverage and enable more robust testing.
-
 #### Frontend Tests
 
 In the interest of time and being able to be tested in real-time, **frontend testing** was not implemented. However, it is recognised as an important part of ensuring the stability of the user interface and application behavior.
 
-Some potential frontend tests include:
+
+## Improvements
+Given more time or if this was an actual production environment, the below additions would be considered.
+
+### Backend
+
+#### More Test Coverage:
+The test coverage on the backend could be vastly increased, ensuring a more reliable service. This would cover things such as handling invalid input errors, network errors and tests for each of the expected exceptions in error cases.
+
+Integration testing combining multiple services and complex requests would be added to test the interactions and data flow between functions.
+
+#### More Specific Error Handling in Case of 500 Internal Server Error:
+Capturing and and logging of more database interaction errors would provide more detail and catch more Internal Server Errors, providing more detailed feedback.
+
+#### Data logging and analytics:
+Logging API response times, error rates and page visits could provide insights to help identify performance bottlenecks, areas for optimisation and improve reliability, especially important as the data grows.
+
+### Frontend
+
+#### Testing
+There are currently no frontend tests. This would be added to test the robustness of the user experience. Tests would include:
 
 - **Unit tests for components**: To verify individual component logic and rendering.
 - **Integration tests**: To ensure that components relate to each other correctly.
-- **End-to-end tests**: To simulate the user flow and validate the overall functionality of the app.
+= **Error testing**: Ensuring that the frontend correctly handles and displays backend errors like validation failures or network issues.
+- **End-to-end tests**: To simulate the full user flow and validate the overall functionality of the app across various scenarios.
 
+#### More thorough handling of errors:
+Currently, all errors from the backend are caught in a single catch block, but more granular error handling could improve user feedback.
+
+#### Home Page + App Logo for Better User Flow and User-Friendly Interface:
+Adding a landing page, app logo and branding would enhance the user experience. A clean, intuitive landing page would improve the overall flow and helps users navigate the app, especially as it grows.
+
+#### Clean Up Front-End Code for improved readability:
+There is scope to re-factor some functions and components on the frontend to improve modularity. Currently there are some components/functions that don't strictly adhere to single responsibility and atomicity principles, e.g. handleFieldChange functions could be separated out into a function for each change. This would become more necessary as the app grows. There is also some repetition of blocks of code across components doing the same thing which could be re-factored into app level functions or hooks.
+
+#### Sort Frontend Data Display for More Clarity:
+Products and Orders are currently not displayed in any particular order. Sorting and filtering functionality would enhance the user experience, especially as the amount of data grows.
+
+#### Charts/Graphs/Analytics:
+Adding an analytics/dashboard page would provide helpful visualisations of data to assist in spotting trends and patterns. This could be added using any of the various charts libraries with little overhead.
+
+#### Set Loading States for Cleaner User Flow:
+There are no "loading" states or useful feedback displayed when data is loading or processing. Given the size of the data this isn't currently an issue, but will become a key part of the user experience as the dataset grows.
+
+### General
+
+#### Authentication:
+In a production environment, authentication and user management would be required to restrict certain actions to specified users only to enhance security.
+
+#### Pagination:
+Implementing pagination on the product/order lists (backend and frontend) would improve performance for larger datasets. Loading data in chunks would improve both response times and overall user experience.
+
+
+### Deployment/Environments
+In a production scenario, separate environments for production, development and testing would be set up. Automated testing would be set up to enable CI/CD and ensure seamless updates without disruption to the services.
 
 ## License
 This project is licensed under the MIT License (LICENSE).
