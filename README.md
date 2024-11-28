@@ -2,8 +2,6 @@
 
 This repository contains a full-stack web application for a product and order management system. The app was built using ASP.NET Core (backend) React with TypeScript (frontend).
 
----
-
 ## Tech Stack
 
 ### Backend:
@@ -16,7 +14,6 @@ This repository contains a full-stack web application for a product and order ma
 - **Language**: TypeScript
 - **Build Tool**: Vite
 
----
 
 ## Features
 
@@ -25,7 +22,6 @@ This repository contains a full-stack web application for a product and order ma
 - **Database**: SQL Server database with automatic migrations and seeding.
 - **Cross-Origin Resource Sharing (CORS)**: Configured to allow requests from the frontend.
 
----
 
 ## Prerequisites
 
@@ -37,11 +33,10 @@ This repository contains a full-stack web application for a product and order ma
    - [Node.js](https://nodejs.org/) (v16 or higher)
    - [npm](https://www.npmjs.com/)
 
----
 
-## Setup Instructions
+## Intructions to run locally
 
 ### 1. Clone the Repository
-```bash
+```powershell
 git clone https://github.com/your-username/mountain-data-warehouse.git
 cd mountain-data-warehouse
