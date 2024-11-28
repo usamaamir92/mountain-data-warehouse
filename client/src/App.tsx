@@ -174,7 +174,6 @@ function App() {
         <Routes>
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/orders" element={<OrdersPage />} />
-          {/* <Route path="/" element={<Typography variant="h4">Home Page</Typography>} /> */}
           <Route
               path="/"
               element={
