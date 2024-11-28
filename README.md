@@ -1,4 +1,4 @@
-# Mountain Data Warehouse Web App
+# Mountain DataWarehouse Web App
 
 This repository contains a full-stack web application for a product and order management system.
 
@@ -15,10 +15,10 @@ This repository contains a full-stack web application for a product and order ma
 - **Build Tool**: Vite
 
 
-## Features
+## Basic Features
 
-- **Product Management**: Add, update, and fetch product details.
-- **Order Management**: Create and view orders with associated products.
+- **Product Management**: Add, update, delete and fetch product details.
+- **Order Management**: Create and view orders with associated products, quantities and costs.
 
 
 ## Intructions to run locally
