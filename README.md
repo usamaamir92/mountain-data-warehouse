@@ -140,7 +140,7 @@ This project is licensed under the MIT License (LICENSE).
 - **TypeScript** was used to enforce type validation, helping prevent runtime errors and making the codebase easier to maintain and scale.
 
 #### React Framework
-- **React** was chosen over Vue for the frontedn as it is what I am more familiar with. However, both frameworks use many of the same principles such as state management component-based architecture.
+- **React** was chosen over Vue for the frontend as it is what I am more familiar with. However, both frameworks use many of the same principles such as state management and component-based architecture.
 
 #### State Management
 - **Global State Management** is handled using **Zustand**, a lightweight state management library. This was chosen over a more comprehensive React library like Redux due to being lightweight, low overhead and more applicable to the scale of this app. Global state management allows consistent handling of application state (product and order lists) with actions and dispatchers, minimising unnecessary API calls.
