@@ -19,7 +19,7 @@ interface AddProductDialogProps {
   onClose: () => void;
 }
 
-const AddProductDialog: React.FC<AddProductDialogProps> = ({ open, onClose }) => {
+const AddProductDialog = ({ open, onClose }: AddProductDialogProps) => {
   const { addProduct } = useProductStore();
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -103,13 +103,19 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({ open, onClose }) =>
         // Add the new product to the global state
         addProduct(createdProduct);
       } catch (error) {
-        console.error('Error adding product:', error);
-
+        let errorMessage = 'An unexpected error occurred';
+      
+        if (axios.isAxiosError(error)) {
+          errorMessage = error.response?.data?.message || 'Unknown Axios error';
+        }
+      
         // Show error alert
-        setSnackbarMessage(`Error adding ${name}. Please try again.`);
+        setSnackbarMessage(`Error adding ${name}: ${errorMessage}`);
         setSnackbarSeverity('error');
         setSnackbarOpen(true);
       }
+      
+
       setNewProduct({ name: '', description: '', price: '', stock: '' }); // Reset form
       onClose();
     }
@@ -178,7 +184,7 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({ open, onClose }) =>
       {/* Snackbar to show success/error messages */}
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={3000}
+        autoHideDuration={5000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         sx={{

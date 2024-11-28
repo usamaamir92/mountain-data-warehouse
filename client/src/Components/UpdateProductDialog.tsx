@@ -22,13 +22,7 @@ interface UpdateProductDialogProps {
   initialValues?: { price?: number; stock?: number };
 }
 
-const UpdateProductDialog: React.FC<UpdateProductDialogProps> = ({
-  open,
-  onClose,
-  productId,
-  productName,
-  initialValues = {},
-}) => {
+const UpdateProductDialog = ({ open, onClose, productId, productName, initialValues = {} }: UpdateProductDialogProps) => {
   const { updateProduct } = useProductStore();
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -112,22 +106,29 @@ const UpdateProductDialog: React.FC<UpdateProductDialogProps> = ({
         setSnackbarMessage(`${productName} successfully updated.`);
         setSnackbarSeverity('success');  
     
-        // Update the global state when zustand set up
+        // Update the global state
         updateProduct(updatedProduct);
       } catch (error) {
-        console.error('Error updating product:', error);
-
+        let errorMessage = 'An unexpected error occurred';
+      
+        if (axios.isAxiosError(error)) {
+          errorMessage = error.response?.data?.message || 'Unknown Axios error';
+        }
+      
         // Show error alert
-        setSnackbarMessage(`Error updating ${productName}. Please try again.`);
+        setSnackbarMessage(`Error updating ${productName}: ${errorMessage}`);
         setSnackbarSeverity('error');
+        setSnackbarOpen(true);
       }
+      
+
       setSnackbarOpen(true);
       onClose();
     }
   };
 
   const handleCloseSnackbar = () => {
-    setSnackbarOpen(false); // Close snackbar
+    setSnackbarOpen(false);
   };
 
   useEffect(() => {
@@ -174,7 +175,7 @@ const UpdateProductDialog: React.FC<UpdateProductDialogProps> = ({
       {/* Snackbar to show success/error messages */}
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={3000}
+        autoHideDuration={5000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         sx={{

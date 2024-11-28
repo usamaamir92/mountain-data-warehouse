@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   Dialog, 
   DialogTitle, 
@@ -21,7 +21,7 @@ interface DeleteProductDialogProps {
   productName: string | null;
 }
 
-const DeleteProductDialog: React.FC<DeleteProductDialogProps> = ({ open, onClose, productId, productName }) => {
+const DeleteProductDialog = ({ open, onClose, productId, productName }: DeleteProductDialogProps) => {
   const { deleteProduct } = useProductStore();
   
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -42,9 +42,16 @@ const DeleteProductDialog: React.FC<DeleteProductDialogProps> = ({ open, onClose
       // Remove deleted product from global store
       deleteProduct(productId);
     } catch (error) {
+      let errorMessage = 'An unexpected error occurred';
+    
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message || 'Unknown Axios error';
+      }
+    
       // Handle error and show error snackbar message
-      setSnackbarMessage('Error deleting product');
+      setSnackbarMessage(`Error deleting product: ${errorMessage}`);
       setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
 
     // Open Snackbar
@@ -78,7 +85,7 @@ const DeleteProductDialog: React.FC<DeleteProductDialogProps> = ({ open, onClose
     {/* Snackbar to show success/error messages */}
     <Snackbar
       open={snackbarOpen}
-      autoHideDuration={3000}
+      autoHideDuration={5000}
       onClose={handleCloseSnackbar}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       sx={{
@@ -98,53 +105,3 @@ const DeleteProductDialog: React.FC<DeleteProductDialogProps> = ({ open, onClose
 };
 
 export default DeleteProductDialog;
-
-
-// import React from 'react';
-// import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
-
-// interface DeleteProductDialogProps {
-//   open: boolean;
-//   onClose: () => void;
-//   onConfirm: () => void;
-//   title?: string;
-//   description?: string;
-//   confirmText?: string;
-//   cancelText?: string;
-// }
-
-// const DeleteProductDialog: React.FC<DeleteProductDialogProps> = ({
-//   open,
-//   onClose,
-//   onConfirm,
-//   title = "Confirm Action",
-//   description = "Are you sure you want to proceed?",
-//   confirmText = "Confirm",
-//   cancelText = "Cancel",
-// }) => {
-//   return (
-//     <Dialog
-//       open={open}
-//       onClose={onClose}
-//       aria-labelledby="confirm-dialog-title"
-//       aria-describedby="confirm-dialog-description"
-//     >
-//       <DialogTitle id="confirm-dialog-title">{title}</DialogTitle>
-//       <DialogContent>
-//         <DialogContentText id="confirm-dialog-description">
-//           {description}
-//         </DialogContentText>
-//       </DialogContent>
-//       <DialogActions>
-//         <Button onClick={onClose} color="primary">
-//           {cancelText}
-//         </Button>
-//         <Button onClick={onConfirm} color="error" autoFocus>
-//           {confirmText}
-//         </Button>
-//       </DialogActions>
-//     </Dialog>
-//   );
-// };
-
-// export default DeleteProductDialog;

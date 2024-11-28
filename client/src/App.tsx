@@ -1,6 +1,18 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Box, CssBaseline, Drawer, List, ListItemText, AppBar, Toolbar, Typography, ListItemButton } from '@mui/material';
+import { 
+  Box, 
+  CssBaseline, 
+  Drawer, 
+  List, 
+  ListItemText, 
+  AppBar, 
+  Toolbar, 
+  Typography, 
+  ListItemButton,
+  Snackbar,
+  Alert
+} from '@mui/material';
 import ProductsPage from './Pages/ProductsPage';
 import OrdersPage from './Pages/OrdersPage';
 import useProductStore from './Store/useProductStore';
@@ -15,13 +27,27 @@ function App() {
   const { setProducts } = useProductStore();
   const { setOrders } = useOrderStore();
 
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(`${backendUrl}/products`);
         setProducts(response.data); // Store products globally
       } catch (error) {
-        console.error('Error fetching products:', error);
+        let errorMessage = 'An unexpected error occurred'
+
+        if (axios.isAxiosError(error)) {
+          errorMessage = error.response?.data?.message || 'Unknown Axios error';
+        }
+      
+        // Show error alert
+        setSnackbarMessage(`Error fetching Product list: ${errorMessage}`);
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
       }
     };
   
@@ -30,7 +56,16 @@ function App() {
         const response = await axios.get(`${backendUrl}/orders`);
         setOrders(response.data); // Store orders globally
       } catch (error) {
-        console.error('Error fetching orders:', error);
+        let errorMessage = 'An unexpected error occurred'
+
+        if (axios.isAxiosError(error)) {
+          errorMessage = error.response?.data?.message || 'Unknown Axios error';
+        }
+      
+        // Show error alert
+        setSnackbarMessage(`Error fetching Order list: ${errorMessage}`);
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
       }
     };
   
@@ -38,13 +73,17 @@ function App() {
     fetchOrders();
   }, []);
 
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
   return (
     <Router>
       <Box
         sx={{
           display: 'flex',
-          width: '100vw', // Full width of the viewport
-          height: '100vh', // Full height of the viewport
+          width: '100vw',
+          height: '100vh',
         }}
       >
         <CssBaseline />
@@ -104,6 +143,25 @@ function App() {
             overflow: 'auto',
           }}
         >
+
+        {/* Snackbar to show success/error messages */}
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={5000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          sx={{
+            width: '400px',
+            border: '2px solid',
+            borderColor: (theme) => theme.palette.success.dark,
+            borderRadius: '4px',
+            boxShadow: 3,
+          }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
 
         {/* Set routes */}
         <Routes>

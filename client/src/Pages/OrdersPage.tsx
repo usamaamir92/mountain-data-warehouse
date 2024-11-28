@@ -9,9 +9,7 @@ import {
   Paper,
   Typography,
   Tooltip,
-  Fab,
-  Snackbar,
-  Alert
+  Fab
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import AddOrderDialog from '../Components/AddOrderDIalog';
@@ -20,18 +18,8 @@ import useOrderStore from '../Store/useOrderStore';
 
 const OrdersPage = () => {
   const { orders } = useOrderStore();
-
   const [addOrderDialogOpen, setAddOrderDialogOpen] = useState(false);
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
-
-
-  // Function to close snackbar alerts
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-  };
 
   // Add Order button
   const handleOpenAddOrderDialog = () => setAddOrderDialogOpen(true);
@@ -54,25 +42,6 @@ const OrdersPage = () => {
           <AddIcon />
         </Fab>
       </Tooltip>
-
-      {/* Snackbar alert component */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        sx={{
-          width: '400px',
-          border: '2px solid',
-          borderColor: (theme) => theme.palette.success.dark,
-          borderRadius: '4px',
-          boxShadow: 3,
-        }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
 
       {/* Page contents */}
       {orders.length > 0 ? (

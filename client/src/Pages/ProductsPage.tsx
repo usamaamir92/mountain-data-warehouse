@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -12,8 +11,6 @@ import {
   IconButton,
   Tooltip,
   Fab,
-  Snackbar,
-  Alert
 } from '@mui/material';
 import UpdateProductDialog from '../Components/UpdateProductDialog';
 import DeleteProductDialog from '../Components/DeleteProductDialog';
@@ -35,14 +32,6 @@ const ProductsPage = () => {
   const [selectedProductName, setSelectedProductName] = useState<string | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
-
-  // Function to close snackbar alerts
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-  };
   
   // Update product functions and modal
   const handleOpenUpdateProductDialog = (productId: string, productName: string) => {
@@ -118,25 +107,6 @@ const ProductsPage = () => {
         open={addProductDialogOpen}
         onClose={handleCloseAddProductDialog}
       />
-
-      {/* Snackbar alert component */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        sx={{
-          width: '400px',
-          border: '2px solid',
-          borderColor: (theme) => theme.palette.success.dark,
-          borderRadius: '4px',
-          boxShadow: 3,
-        }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
 
       {/* Page contents */}
       {products.length > 0 ? (

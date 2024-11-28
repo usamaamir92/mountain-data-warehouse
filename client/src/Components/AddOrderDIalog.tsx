@@ -28,7 +28,7 @@ interface AddOrderDialogProps {
   onClose: () => void;
 }
 
-const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose }) => {
+const AddOrderDialog = ({ open, onClose }: AddOrderDialogProps) => {
     const { addOrder } = useOrderStore();
     const { products } = useProductStore();
 
@@ -46,7 +46,6 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose }) => {
       setAvailableProducts(products);
     }, [products]);
 
-    console.log("productsss", products)
   
     const handleAddProduct = () => {
       setOrderProducts([...orderProducts, { productId: '', name: '', quantity: 1 }]);
@@ -73,8 +72,7 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose }) => {
             updatedProducts[index] = {
               ...updatedProducts[index],
               productId: selectedProductId,
-              name: selectedProduct ? selectedProduct.name : '',  // Add the product name
-              quantity: 1, // Reset quantity to 1 or your desired default value
+              name: selectedProduct.name
             };
         } else {
             // Otherwise, update the quantity field
@@ -107,7 +105,7 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose }) => {
   
     const handleSubmit = async () => {
         if (validate()) {
-          // Prepare the data for the POST request (only productId and quantity)
+          // Prepare the data for the POST request (only productId and quantity to be sent in request)
           const requestData = {
             products: orderProducts.map(product => ({
               productId: product.productId,
@@ -128,13 +126,19 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose }) => {
             // Update global orders state
             addOrder(createdOrder);
           } catch (error) {
-            console.log("Post request error: ", error)
-            const errorMessage = error.response.data.message;
+            let errorMessage = 'An unexpected error occurred';
+          
+            if (axios.isAxiosError(error)) {
+              errorMessage = error.response?.data?.message || 'Unknown Axios error';
+            }
+          
+            // Show snackbar error
             setSnackbarMessage(`Error creating order: ${errorMessage}`);
             setSnackbarSeverity('error');
-            setSnackbarOpen(true);
           }
-
+          
+          
+          setSnackbarOpen(true);
           onClose();
         }
     };
@@ -236,7 +240,7 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose }) => {
         {/* Snackbar */}
         <Snackbar 
             open={snackbarOpen} 
-            autoHideDuration={3000} 
+            autoHideDuration={5000} 
             onClose={() => setSnackbarOpen(false)}
             anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
