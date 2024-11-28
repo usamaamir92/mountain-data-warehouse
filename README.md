@@ -102,7 +102,7 @@ cd mountain-data-warehouse
 
 This project is licensed under the MIT License (LICENSE).
 
-## Design Decisions
+## Architecture and Design Decisions
 
 ### Backend Design Decisions
 
