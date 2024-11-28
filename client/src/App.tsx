@@ -88,7 +88,17 @@ function App() {
         {/* AppBar */}
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
           <Toolbar>
-            <Typography variant="h6" noWrap>
+          <Typography 
+              variant="h6" 
+              noWrap 
+              component={Link} 
+              to="/"
+              sx={{ 
+                textDecoration: 'none',
+                color: 'inherit',
+                '&:hover': { color: 'inherit' }
+              }}
+            >
               Mountain DataWarehouse
             </Typography>
           </Toolbar>
@@ -164,7 +174,35 @@ function App() {
         <Routes>
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/orders" element={<OrdersPage />} />
-          <Route path="/" element={<Typography variant="h4">Home Page</Typography>} />
+          {/* <Route path="/" element={<Typography variant="h4">Home Page</Typography>} /> */}
+          <Route
+              path="/"
+              element={
+                <>
+                  <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+                    <img
+                      src="/mountaindatawarehouse.png"
+                      alt="Mountain DataWarehouse"
+                      style={{
+                        maxWidth: '300px',
+                        height: 'auto',
+                        borderRadius: '8px',
+                      }}
+                    />
+                  </Box>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      textAlign: 'center',
+                      fontWeight: 'bold',
+                      mb: 4,
+                    }}
+                  >
+                    Welcome to Mountain DataWarehouse, where your data finds its perfect peak!
+                  </Typography>
+                </>
+              }
+            />
         </Routes>
         </Box>
       </Box>
