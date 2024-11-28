@@ -206,7 +206,7 @@ Logging API response times, error rates and page visits could provide insights t
 ### Frontend
 
 #### Testing
-There are currently no frontend tests. This would be added to test the robustness of the user experience. Tests would include:
+There are currently no frontend tests. These would be added to test the robustness of the user experience and would include:
 
 - **Unit tests for components**: To verify individual component logic and rendering.
 - **Integration tests**: To ensure that components relate to each other correctly.
