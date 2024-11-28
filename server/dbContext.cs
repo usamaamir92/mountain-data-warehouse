@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using server.Extensions;
 
 
 namespace server
