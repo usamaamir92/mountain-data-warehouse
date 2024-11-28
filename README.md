@@ -210,7 +210,7 @@ There are currently no frontend tests. These would be added to test the robustne
 
 - **Unit tests for components**: To verify individual component logic and rendering.
 - **Integration tests**: To ensure that components relate to each other correctly.
-= **Error testing**: Ensuring that the frontend correctly handles and displays backend errors like validation failures or network issues.
+- **Error testing**: Ensuring that the frontend correctly handles and displays backend errors like validation failures or network issues.
 - **End-to-end tests**: To simulate the full user flow and validate the overall functionality of the app across various scenarios.
 
 #### More thorough handling of errors:
