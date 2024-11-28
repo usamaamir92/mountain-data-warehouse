@@ -1,6 +1,6 @@
 # Mountain Data Warehouse Web App
 
-This repository contains a full-stack web application for managing products and orders in a warehouse system. The backend is built with ASP.NET Core and Entity Framework Core, while the frontend is developed using React with TypeScript.
+This repository contains a full-stack web application for a product and order management system. The app was built using ASP.NET Core (backend) React with TypeScript (frontend).
 
 ---
 
@@ -8,9 +8,7 @@ This repository contains a full-stack web application for managing products and 
 
 ### Backend:
 - **Framework**: ASP.NET Core
-- **Database**: Microsoft SQL Server (Entity Framework Core for ORM)
-- **Environment Configuration**: DotNetEnv
-- **Dependency Injection**: Built-in .NET DI
+- **Database**: Microsoft SQL Server
 - **API Documentation**: Swagger/OpenAPI
 
 ### Frontend:
