@@ -1,6 +1,6 @@
 # Mountain Data Warehouse Web App
 
-This repository contains a full-stack web application for a product and order management system. The app was built using ASP.NET Core (backend) React with TypeScript (frontend).
+This repository contains a full-stack web application for a product and order management system.
 
 ## Tech Stack
 
@@ -37,6 +37,62 @@ This repository contains a full-stack web application for a product and order ma
 ## Intructions to run locally
 
 ### 1. Clone the Repository
-```powershell
-git clone https://github.com/your-username/mountain-data-warehouse.git
+```bash
+git clone https://github.com/usamaamir92/mountain-data-warehouse.git
 cd mountain-data-warehouse
+
+2. Backend Setup
+1. Navigate to the `server` directory:
+   cd server
+
+2. Install Dependencies:
+   dotnet restore
+
+3. Set Up Environment Variables:
+   - Create a `.env` file in the `server` directory (already included in the repo for development):
+     FRONTEND_URL=http://localhost:5173
+     DATABASE_SERVER=.\SQLEXPRESS
+     DATABASE_NAME=MountainDataWarehouse
+
+4. Run the Application:
+   - Apply migrations and seed the database automatically on startup.
+   dotnet run
+
+   The backend server will start at http://localhost:5130.
+
+---
+
+3. Frontend Setup
+1. Navigate to the `client` directory:
+   cd client
+
+2. Install Dependencies:
+   npm install
+
+3. Set Up Environment Variables:
+   - Create a `.env` file in the `client` directory (already included in the repo for development):
+     VITE_BACKEND_URL=http://localhost:5130
+
+4. Run the Application:
+   npm run dev
+
+   The frontend will be available at http://localhost:5173.
+
+
+API Documentation
+
+- Once the backend is running, you can access the Swagger UI for API documentation at:
+  http://localhost:5130/swagger
+
+
+Troubleshooting
+
+- SQL Server Connection Issues: Ensure SQL Server is running and accessible. Use .\SQLEXPRESS if you are using the default local instance.
+- Port Conflicts: Verify that no other applications are running on http://localhost:5130 or http://localhost:5173.
+
+
+License
+
+This project is licensed under the MIT License (LICENSE).
+
+
