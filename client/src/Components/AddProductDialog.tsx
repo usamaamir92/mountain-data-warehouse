@@ -20,12 +20,15 @@ interface AddProductDialogProps {
 }
 
 const AddProductDialog = ({ open, onClose }: AddProductDialogProps) => {
+  // Import global state management function
   const { addProduct } = useProductStore();
 
+  // State variables to manage Snackbar visibility and content
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
+  // State variable to manage new product input details
   const [newProduct, setNewProduct] = useState({
     name: '',
     description: '',
@@ -40,6 +43,7 @@ const AddProductDialog = ({ open, onClose }: AddProductDialogProps) => {
     stock: '',
   });
 
+  // Function to handle changes in form values and set to state variables
   const handleChange = (field: keyof typeof newProduct) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -48,19 +52,21 @@ const AddProductDialog = ({ open, onClose }: AddProductDialogProps) => {
     // Validation for price (max 2 decimal places)
     if (field === 'price') {
       const decimalPattern = /^\d*(\.\d{0,2})?$/;
-      if (!decimalPattern.test(inputValue)) return; // Reject invalid input
+      if (!decimalPattern.test(inputValue)) return;
     }
 
     // Validation for stock (whole numbers only)
     if (field === 'stock') {
       const integerPattern = /^\d*$/;
-      if (!integerPattern.test(inputValue)) return; // Reject invalid input
+      if (!integerPattern.test(inputValue)) return;
     }
 
+    // Clear any previous errors and set new Product state
     setNewProduct((prev) => ({ ...prev, [field]: inputValue }));
-    setErrors((prev) => ({ ...prev, [field]: '' })); // Clear any previous errors
+    setErrors((prev) => ({ ...prev, [field]: '' }));
   };
 
+  // Form validation pre-submission to check for empty/disallowed inputs
   const validate = () => {
     const { name, description, price, stock } = newProduct;
     const newErrors: typeof errors = {
@@ -76,14 +82,16 @@ const AddProductDialog = ({ open, onClose }: AddProductDialogProps) => {
     if (!stock || parseInt(stock, 10) < 0) newErrors.stock = 'Stock must be 0 or greater.';
 
     setErrors(newErrors);
-    return Object.values(newErrors).every((error) => !error); // Return true if no errors
+    return Object.values(newErrors).every((error) => !error);
   };
 
+  // Function to submit request to backend
   const handleAddProduct = async (product: { name: string; description: string; price: string; stock: string }) => {
     if (validate()) {
       const { name, description, price, stock } = product;
       
       try {
+        // Send POST request using axios
         const response = await axios.post(`${backendUrl}/products`, {
           name,
           description,
@@ -91,16 +99,13 @@ const AddProductDialog = ({ open, onClose }: AddProductDialogProps) => {
           stock: parseInt(stock, 10),
         });
 
+        // Show success confirmation in Snackbar
         const createdProduct = response.data;
 
-        // Show success alert
         setSnackbarMessage(`${name} successfully added.`);
         setSnackbarSeverity('success');
-        setSnackbarOpen(true);
-
-        console.log("Add product response: ", response)
     
-        // Add the new product to the global state
+        // Update global products state
         addProduct(createdProduct);
       } catch (error) {
         let errorMessage = 'An unexpected error occurred';
@@ -109,22 +114,19 @@ const AddProductDialog = ({ open, onClose }: AddProductDialogProps) => {
           errorMessage = error.response?.data?.message || 'Unknown Axios error';
         }
       
-        // Show error alert
+        // Show error in Snackbar
         setSnackbarMessage(`Error adding ${name}: ${errorMessage}`);
         setSnackbarSeverity('error');
-        setSnackbarOpen(true);
       }
       
+      // Show Snackbar
+      setSnackbarOpen(true);
 
-      setNewProduct({ name: '', description: '', price: '', stock: '' }); // Reset form
+      // Reset form and close dialog
+      setNewProduct({ name: '', description: '', price: '', stock: '' });
       onClose();
     }
   };
-
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-  };
-
 
   return (
     <>
@@ -185,7 +187,7 @@ const AddProductDialog = ({ open, onClose }: AddProductDialogProps) => {
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={5000}
-        onClose={handleCloseSnackbar}
+        onClose={() => setSnackbarOpen(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         sx={{
           width: '400px',
@@ -195,7 +197,7 @@ const AddProductDialog = ({ open, onClose }: AddProductDialogProps) => {
           boxShadow: 3,
         }}
       >
-        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
           {snackbarMessage}
         </Alert>
       </Snackbar>

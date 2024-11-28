@@ -30,24 +30,26 @@ interface AddOrderDialogProps {
 }
 
 const AddOrderDialog = ({ open, onClose }: AddOrderDialogProps) => {
+    // Import global state management variable and functions
     const { addOrder } = useOrderStore();
     const { products } = useProductStore();
 
+    // State variables for add order form
     const [availableProducts, setAvailableProducts] = useState<any[]>([]);
-
     const [orderProducts, setOrderProducts] = useState<{ productId: string; name: string; quantity: number }[]>([{ productId: '', name: '', quantity: 1 }]);
     const [errors, setErrors] = useState<{ productId: string; quantity: string }[]>([{ productId: '', quantity: '' }]);
     
+    // State variables to manage Snackbar visibility and content
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
-
+    // useEffect hook to reload products list if it changes to maintain up-to-date product list
     useEffect(() => {
       setAvailableProducts(products);
     }, [products]);
 
-  
+    // Functions to add/remove additional products from 
     const handleAddProduct = () => {
       setOrderProducts([...orderProducts, { productId: '', name: '', quantity: 1 }]);
       setErrors([...errors, { productId: '', quantity: '' }]);
@@ -62,35 +64,46 @@ const AddOrderDialog = ({ open, onClose }: AddOrderDialogProps) => {
       newErrors.splice(index, 1);
       setErrors(newErrors);
     };
+
+    // Functions to handle changes in form values and set as state variables
+    const handleProductChange = (index: number) => (event: SelectChangeEvent<string>) => {
+      const updatedProducts = [...orderProducts];
+      const selectedProductId = event.target.value;
+    
+      const selectedProduct = availableProducts.find((product) => product.productId === selectedProductId);
+      updatedProducts[index] = {
+        ...updatedProducts[index],
+        productId: selectedProductId,
+        name: selectedProduct ? selectedProduct.name : ''
+      };
   
-    // const handleChange = (index: number, field: keyof typeof orderProducts[0]) => (event: React.ChangeEvent<{ value: unknown }>) => {
-    const handleChange = (index: number, field: keyof typeof orderProducts[0]) => (event: SelectChangeEvent<string>) => {
-        const updatedProducts = [...orderProducts];
-        const selectedProductId = event.target.value;
-    
-        // If the field being updated is productId, update the productId and reset quantity to 1, and also set the product name
-        if (field === 'productId') {
-            const selectedProduct = availableProducts.find((product) => product.productId === selectedProductId);
-            updatedProducts[index] = {
-              ...updatedProducts[index],
-              productId: selectedProductId,
-              name: selectedProduct.name
-            };
-        } else {
-            // Otherwise, update the quantity field
-            updatedProducts[index] = { ...updatedProducts[index], [field]: event.target.value };
-        }
-    
-        // Set the state with the updated list of products
-        setOrderProducts(updatedProducts);
-    
-        // Clear errors when the input changes
-        const updatedErrors = [...errors];
-        updatedErrors[index] = { productId: '', quantity: '' };
-        setErrors(updatedErrors);
+      // Set the state with the updated list of products
+      setOrderProducts(updatedProducts);
+  
+      // Clear errors when the input changes
+      const updatedErrors = [...errors];
+      updatedErrors[index] = { productId: '', quantity: '' };
+      setErrors(updatedErrors);
     };
-    
   
+      const handleQuantityChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+          const updatedProducts = [...orderProducts];
+          updatedProducts[index] = {
+            ...updatedProducts[index],
+            quantity: parseInt(event.target.value, 10),
+          };
+      
+          // Set the state with the updated quantity
+          setOrderProducts(updatedProducts);
+      
+          // Clear the quantity error
+          const updatedErrors = [...errors];
+          updatedErrors[index] = { productId: '', quantity: '' };
+          setErrors(updatedErrors);
+      };
+  
+    
+    // Form validation pre-submission to check for empty/disallowed inputs
     const validate = () => {
       let valid = true;
       const newErrors = orderProducts.map((product) => ({
@@ -100,11 +113,12 @@ const AddOrderDialog = ({ open, onClose }: AddOrderDialogProps) => {
   
       setErrors(newErrors);
   
-      // Check if any errors exist
+      // Check if any errors are present
       valid = newErrors.every((error) => !error.productId && !error.quantity);
       return valid;
     };
   
+    // Function to submit request to backend
     const handleSubmit = async () => {
         if (validate()) {
           // Prepare the data for the POST request (only productId and quantity to be sent in request)
@@ -119,11 +133,11 @@ const AddOrderDialog = ({ open, onClose }: AddOrderDialogProps) => {
             // Send POST request using axios
             const response = await axios.post(`${backendUrl}/orders`, requestData);
 
+            // Show success confirmation in Snackbar
             const createdOrder = response.data;
   
             setSnackbarMessage('Order successfully created.');
             setSnackbarSeverity('success');
-            setSnackbarOpen(true);
 
             // Update global orders state
             addOrder(createdOrder);
@@ -134,13 +148,15 @@ const AddOrderDialog = ({ open, onClose }: AddOrderDialogProps) => {
               errorMessage = error.response?.data?.message || 'Unknown Axios error';
             }
           
-            // Show snackbar error
+            // Show error in Snackbar
             setSnackbarMessage(`Error creating order: ${errorMessage}`);
             setSnackbarSeverity('error');
           }
-          
-          
+
+          // Show Snackbar
           setSnackbarOpen(true);
+
+          // Close the dialog after request
           onClose();
         }
     };
@@ -153,13 +169,14 @@ const AddOrderDialog = ({ open, onClose }: AddOrderDialogProps) => {
           {orderProducts.map((product, index) => (
             <div key={index}>
               <Box display="flex" alignItems="center" style={{ marginBottom: '16px' }}>
+
                 {/* Product select dropdown */}
                 <Box flex={9} style={{ marginRight: '8px' }}>
                   <FormControl fullWidth margin="normal">
                     <InputLabel>Product</InputLabel>
                     <Select
                     value={product.productId}
-                    onChange={handleChange(index, 'productId')}
+                    onChange={handleProductChange(index)}
                     displayEmpty
                     renderValue={(selected) => {
                         const selectedProduct = availableProducts.find(p => p.productId === selected);
@@ -187,7 +204,7 @@ const AddOrderDialog = ({ open, onClose }: AddOrderDialogProps) => {
                     fullWidth
                     margin="normal"
                     value={product.quantity}
-                    onChange={handleChange(index, 'quantity')}
+                    onChange={handleQuantityChange(index)}
                     error={!!errors[index].quantity}
                     helperText={errors[index].quantity}
                   />

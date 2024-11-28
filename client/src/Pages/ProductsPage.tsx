@@ -22,18 +22,23 @@ import useProductStore from '../Store/useProductStore';
 
 
 const ProductsPage = () => {
-  // Use Zustand store for products
+  // Zustand store for global state management
   const { products } = useProductStore();
 
-  const [deleteProductDialogOpen, setDeleteProductDialogOpen] = useState(false);
+  // Declare state variables related to add/update/delete product modals
   const [updateProductDialogOpen, setUpdateProductDialogOpen] = useState(false);  
   const [addProductDialogOpen, setAddProductDialogOpen] = useState(false);
+  const [deleteProductDialogOpen, setDeleteProductDialogOpen] = useState(false);
   
+  // Variables to pass product name and id to add/update/delete modals
   const [selectedProductName, setSelectedProductName] = useState<string | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
 
+  // Functions to open and close add product modal
+  const handleOpenAddProductDialog = () => setAddProductDialogOpen(true);
+  const handleCloseAddProductDialog = () => setAddProductDialogOpen(false);
   
-  // Update product functions and modal
+  // Functions to open and close update product modal
   const handleOpenUpdateProductDialog = (productId: string, productName: string) => {
     setSelectedProductId(productId);
     setSelectedProductName(productName);
@@ -49,7 +54,7 @@ const ProductsPage = () => {
     }, 300);
   };
   
-  // Delete product functions and modal
+  // Functions to open and close delete product modal
   const handleOpenDeleteProductDialog = (productId: string, productName: string) => {
     setSelectedProductId(productId);
     setSelectedProductName(productName);
@@ -64,10 +69,6 @@ const ProductsPage = () => {
       setSelectedProductName(null);  
     }, 300);
   };  
-
-  // Add Product functions and modal
-  const handleOpenAddProductDialog = () => setAddProductDialogOpen(true);
-  const handleCloseAddProductDialog = () => setAddProductDialogOpen(false);
   
   return (
     <div>
@@ -75,7 +76,20 @@ const ProductsPage = () => {
         Products
       </Typography>
 
-      {/* Edit Product Dialog */}
+      {/* Add Product Button */}
+      <Tooltip title="Add new product">
+        <Fab color="primary" aria-label="add" onClick={handleOpenAddProductDialog} style={{ position: 'fixed', bottom: 16, right: 16 }}>
+          <AddIcon />
+        </Fab>
+      </Tooltip>
+
+      {/* Add Product Dialog */}
+      <AddProductDialog
+        open={addProductDialogOpen}
+        onClose={handleCloseAddProductDialog}
+      />
+
+      {/* Update Product Dialog */}
       <UpdateProductDialog
         open={updateProductDialogOpen}
         onClose={handleCloseUpdateProductDialog}
@@ -93,19 +107,6 @@ const ProductsPage = () => {
       onClose={handleCloseDeleteProductDialog}
       productId={selectedProductId}
       productName={selectedProductName}
-      />
-
-      {/* Add Product Button */}
-      <Tooltip title="Add new product">
-        <Fab color="primary" aria-label="add" onClick={handleOpenAddProductDialog} style={{ position: 'fixed', bottom: 16, right: 16 }}>
-          <AddIcon />
-        </Fab>
-      </Tooltip>
-
-      {/* Add Product Dialog */}
-      <AddProductDialog
-        open={addProductDialogOpen}
-        onClose={handleCloseAddProductDialog}
       />
 
       {/* Page contents */}

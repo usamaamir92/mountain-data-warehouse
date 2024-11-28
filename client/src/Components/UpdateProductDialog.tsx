@@ -23,50 +23,58 @@ interface UpdateProductDialogProps {
 }
 
 const UpdateProductDialog = ({ open, onClose, productId, productName, initialValues = {} }: UpdateProductDialogProps) => {
+  // Import global state management function
   const { updateProduct } = useProductStore();
 
+  // State variables to manage Snackbar visibility and content
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
+  // State variables to manage updated product input details
   const [values, setValues] = useState<{ price?: number; stock?: number }>(initialValues);
   const [errors, setErrors] = useState<{ price?: string; stock?: string }>({});
 
+  // useEffect hook to re-render pre-set values on change
+  useEffect(() => {
+    setValues(initialValues);
+    setErrors({});
+  }, [initialValues]);
 
+  // Function to handle changes in form values and set to state variables
   const handleChange = (field: keyof typeof values) => (event: React.ChangeEvent<HTMLInputElement>) => {
     let inputValue = event.target.value;
   
     if (field === 'price') {
-      // Allow only numbers with at most 2 decimal places
+    // Validation for price (max 2 decimal places)
       const decimalPattern = /^\d+(\.\d{0,2})?$/;
       if (!decimalPattern.test(inputValue)) {
-        return; // Ignore invalid input
+        return;
       }
     }
   
+    // Validation for stock (whole numbers only)
     if (field === 'stock') {
-      // Allow only whole numbers (no decimals) 
-      const integerPattern = /^\d*$/; // Matches only whole numbers
+      const integerPattern = /^\d*$/;
       if (!integerPattern.test(inputValue)) {
-        return; // Ignore invalid input
+        return;
       }
     }
-  
+
+    // Parse input into correct format
     let value: number | undefined;
     if (inputValue !== '') {
       value = field === 'price' ? parseFloat(inputValue) : parseInt(inputValue, 10);
     } else {
       value = undefined;
     }
-  
+
+    // Clear any previous errors and set new Product state
     setValues((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
-  
-  useEffect(() => {
-    console.log("changed values: ", values)
-  },[values])
 
+  // Form validation pre-submission to check for empty/disallowed inputs
   const validate = () => {
     const newErrors: { price?: string; stock?: string } = {};
 
@@ -92,14 +100,16 @@ const UpdateProductDialog = ({ open, onClose, productId, productName, initialVal
     return Object.keys(newErrors).length === 0; // Return true if no errors
   };
 
+  // Function to submit request to backend
   const handleUpdateProduct = async (values: { price?: number; stock?: number }) => {
     if (validate()) {
       if (!productId) return;
     
       try {
-        // Send the update to the backend
+        // Send PATCH request using axios
         const response = await axios.patch(`${backendUrl}/products/${productId}`, values);
 
+        // Show success confirmation in Snackbar
         const updatedProduct = response.data;
 
         // Show success alert
@@ -114,27 +124,20 @@ const UpdateProductDialog = ({ open, onClose, productId, productName, initialVal
         if (axios.isAxiosError(error)) {
           errorMessage = error.response?.data?.message || 'Unknown Axios error';
         }
-      
-        // Show error alert
+
+        // Show error in Snackbar
         setSnackbarMessage(`Error updating ${productName}: ${errorMessage}`);
         setSnackbarSeverity('error');
         setSnackbarOpen(true);
       }
       
-
+      // Show Snackbar
       setSnackbarOpen(true);
+
+      // Close the dialog after update request
       onClose();
     }
   };
-
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-  };
-
-  useEffect(() => {
-    setValues(initialValues);
-    setErrors({});
-  }, [initialValues]);
 
   return (
     <>
@@ -176,7 +179,7 @@ const UpdateProductDialog = ({ open, onClose, productId, productName, initialVal
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={5000}
-        onClose={handleCloseSnackbar}
+        onClose={() => setSnackbarOpen(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         sx={{
           width: '400px',
@@ -186,7 +189,7 @@ const UpdateProductDialog = ({ open, onClose, productId, productName, initialVal
           boxShadow: 3,
         }}
       >
-        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
           {snackbarMessage}
         </Alert>
       </Snackbar>

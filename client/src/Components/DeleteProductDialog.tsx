@@ -22,17 +22,20 @@ interface DeleteProductDialogProps {
 }
 
 const DeleteProductDialog = ({ open, onClose, productId, productName }: DeleteProductDialogProps) => {
+  // Import global state management function
   const { deleteProduct } = useProductStore();
   
+  // State variables to manage Snackbar visibility and content
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
-  // Function to delete product from the server
+  // Function to submit request to backend
   const handleDeleteProduct = async () => {
     if (!productId) return;
 
     try {
+      // Send DELETE request using axios
       await axios.delete(`${backendUrl}/products/${productId}`);
 
       // Show success snackbar message
@@ -51,16 +54,13 @@ const DeleteProductDialog = ({ open, onClose, productId, productName }: DeletePr
       // Handle error and show error snackbar message
       setSnackbarMessage(`Error deleting product: ${errorMessage}`);
       setSnackbarSeverity('error');
-      setSnackbarOpen(true);
     }
 
-    // Open Snackbar
+    // Show Snackbar
     setSnackbarOpen(true);
-    onClose(); // Close the dialog after deletion attempt
-  };
 
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false); // Close snackbar
+    // Close the dialog after deletion attempt
+    onClose();
   };
 
   return (
@@ -86,7 +86,7 @@ const DeleteProductDialog = ({ open, onClose, productId, productName }: DeletePr
     <Snackbar
       open={snackbarOpen}
       autoHideDuration={5000}
-      onClose={handleCloseSnackbar}
+      onClose={() => setSnackbarOpen(false)}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       sx={{
         width: '400px',
@@ -96,7 +96,7 @@ const DeleteProductDialog = ({ open, onClose, productId, productName }: DeletePr
         boxShadow: 3,
       }}
     >
-      <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+      <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
         {snackbarMessage}
       </Alert>
     </Snackbar>

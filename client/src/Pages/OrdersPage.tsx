@@ -12,7 +12,7 @@ import {
   Fab
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import AddOrderDialog from '../Components/AddOrderDIalog';
+import AddOrderDialog from '../Components/AddOrderDialog';
 import useOrderStore from '../Store/useOrderStore';
 
 
@@ -20,8 +20,7 @@ const OrdersPage = () => {
   const { orders } = useOrderStore();
   const [addOrderDialogOpen, setAddOrderDialogOpen] = useState(false);
 
-
-  // Add Order button
+  // Functions to open and close add order modal
   const handleOpenAddOrderDialog = () => setAddOrderDialogOpen(true);
   const handleCloseAddOrderDialog = () => setAddOrderDialogOpen(false);
 
@@ -31,17 +30,18 @@ const OrdersPage = () => {
         Orders
       </Typography>
 
-      <AddOrderDialog
-        open={addOrderDialogOpen}
-        onClose={handleCloseAddOrderDialog}
-      />
-
       {/* Add Order Button */}
       <Tooltip title="Add new order">
         <Fab color="primary" aria-label="add" onClick={handleOpenAddOrderDialog} style={{ position: 'fixed', bottom: 16, right: 16 }}>
           <AddIcon />
         </Fab>
       </Tooltip>
+
+      {/* Add Order Dialog */}
+      <AddOrderDialog
+        open={addOrderDialogOpen}
+        onClose={handleCloseAddOrderDialog}
+      />
 
       {/* Page contents */}
       {orders.length > 0 ? (
@@ -56,7 +56,6 @@ const OrdersPage = () => {
                 <TableCell sx={{ width: 'auto', whiteSpace: 'nowrap' }} align="right"><strong>Total Amount (£)</strong></TableCell>
               </TableRow>
             </TableHead>
-
             <TableBody>
               {orders.map((order) => (
                 <TableRow key={order.orderId}>

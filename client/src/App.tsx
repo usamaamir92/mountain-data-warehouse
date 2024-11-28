@@ -27,6 +27,7 @@ function App() {
   const { setProducts } = useProductStore();
   const { setOrders } = useOrderStore();
 
+  // State variables to manage Snackbar visibility and content
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
@@ -73,10 +74,6 @@ function App() {
     fetchOrders();
   }, []);
 
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-  };
-
   return (
     <Router>
       <Box
@@ -104,7 +101,7 @@ function App() {
             width: drawerWidth,
             flexShrink: 0,
             position: 'fixed',
-            top: 64,  // Position the Drawer below the AppBar
+            top: 64,
             [`& .MuiDrawer-paper`]: {
               width: drawerWidth,
               boxSizing: 'border-box',
@@ -148,7 +145,7 @@ function App() {
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={5000}
-          onClose={handleCloseSnackbar}
+          onClose={() => setSnackbarOpen(false)}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           sx={{
             width: '400px',
@@ -158,7 +155,7 @@ function App() {
             boxShadow: 3,
           }}
         >
-          <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
             {snackbarMessage}
           </Alert>
         </Snackbar>
