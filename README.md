@@ -25,12 +25,9 @@ This repository contains a full-stack web application for a product and order ma
 
 ## Prerequisites
 
-1. **Backend Requirements**:
    - [.NET 6 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
    - [SQL Server](https://www.microsoft.com/en-us/sql-server)
-
-2. **Frontend Requirements**:
-   - [Node.js](https://nodejs.org/) (v16 or higher)
+   - [Node.js](https://nodejs.org/)
    - [npm](https://www.npmjs.com/)
 
 
@@ -52,7 +49,7 @@ cd mountain-data-warehouse
    dotnet restore
 ```
 #### Set Up Environment Variables:
-   - Create a `.env` file in the `server` directory (already included in the repo for development):
+   - Create a `.env` file in the `server` directory:
 ```bash
      FRONTEND_URL=http://localhost:5173
      DATABASE_SERVER=.\SQLEXPRESS
@@ -79,7 +76,7 @@ cd mountain-data-warehouse
 ```
 #### Set Up Environment Variables:
 ```bash
-   - Create a `.env` file in the `client` directory (already included in the repo for development):
+   - Create a `.env` file in the `client`:
      VITE_BACKEND_URL=http://localhost:5130
 ```
 #### Run the Application:
@@ -90,7 +87,7 @@ cd mountain-data-warehouse
 
 
 
-Troubleshooting
+### Troubleshooting
 
 - SQL Server Connection Issues: Ensure SQL Server is running and accessible. Use .\SQLEXPRESS if you are using the default local instance.
 - Port Conflicts: Verify that no other applications are running on http://localhost:5130 or http://localhost:5173.
