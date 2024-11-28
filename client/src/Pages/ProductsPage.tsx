@@ -94,38 +94,6 @@ const ProductsPage = () => {
   // Add Product functions and modal
   const handleOpenAddProductDialog = () => setAddProductDialogOpen(true);
   const handleCloseAddProductDialog = () => setAddProductDialogOpen(false);
-
-  const handleAddProduct = async (product: { name: string; description: string; price: string; stock: string }) => {
-    const { name, description, price, stock } = product;
-  
-    // Here, we no longer need to do manual validation as it's handled by the AddProductDialog
-    try {
-      const response = await axios.post(`${backendUrl}/products`, {
-        name,
-        description,
-        price: parseFloat(price),
-        stock: parseInt(stock, 10),
-      });
-
-      // Show success alert
-      setSnackbarMessage(`${name} successfully added.`);
-      setSnackbarSeverity('success');
-      setSnackbarOpen(true);
-  
-      // Add the new product to the state
-      setProducts((prev) => [...prev, response.data]);
-  
-      // Close the dialog after adding the product
-      handleCloseAddProductDialog();
-    } catch (error) {
-      console.error('Error adding product:', error);
-
-      // Show error alert
-      setSnackbarMessage(`Error adding ${name}. Please try again.`);
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
-    }
-  };
   
 
   return (
@@ -138,7 +106,6 @@ const ProductsPage = () => {
       <UpdateProductDialog
         open={updateProductDialogOpen}
         onClose={handleCloseUpdateProductDialog}
-        // onConfirm={(values) => handleUpdateProduct(values)}
         productId={selectedProductId}
         productName={selectedProductName}
         initialValues={{
@@ -166,7 +133,6 @@ const ProductsPage = () => {
       <AddProductDialog
         open={addProductDialogOpen}
         onClose={handleCloseAddProductDialog}
-        onAdd={handleAddProduct}
       />
 
       {/* Snackbar alert component */}

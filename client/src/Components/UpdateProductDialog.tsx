@@ -16,7 +16,6 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 interface UpdateProductDialogProps {
   open: boolean;
   onClose: () => void;
-  // onConfirm: (values: { price?: number; stock?: number }) => void;
   productId: string | null;
   productName: string | null;
   initialValues?: { price?: number; stock?: number };
@@ -25,7 +24,6 @@ interface UpdateProductDialogProps {
 const UpdateProductDialog: React.FC<UpdateProductDialogProps> = ({
   open,
   onClose,
-  // onConfirm,
   productId,
   productName,
   initialValues = {},

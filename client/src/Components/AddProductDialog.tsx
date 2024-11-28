@@ -6,15 +6,23 @@ import {
   DialogActions,
   TextField,
   Button,
+  Snackbar,
+  Alert
 } from '@mui/material';
+import axios from 'axios';
+
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 interface AddProductDialogProps {
   open: boolean;
   onClose: () => void;
-  onAdd: (product: { name: string; description: string; price: string; stock: string }) => void;
 }
 
-const AddProductDialog: React.FC<AddProductDialogProps> = ({ open, onClose, onAdd }) => {
+const AddProductDialog: React.FC<AddProductDialogProps> = ({ open, onClose }) => {
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
   const [newProduct, setNewProduct] = useState({
     name: '',
     description: '',
@@ -68,67 +76,117 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({ open, onClose, onAd
     return Object.values(newErrors).every((error) => !error); // Return true if no errors
   };
 
-  const handleSubmit = () => {
+  const handleAddProduct = async (product: { name: string; description: string; price: string; stock: string }) => {
     if (validate()) {
-      onAdd(newProduct);
+      const { name, description, price, stock } = product;
+      
+      try {
+        const response = await axios.post(`${backendUrl}/products`, {
+          name,
+          description,
+          price: parseFloat(price),
+          stock: parseInt(stock, 10),
+        });
+
+        // Show success alert
+        setSnackbarMessage(`${name} successfully added.`);
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+    
+        // Add the new product to the global state
+        // setProducts((prev) => [...prev, response.data]);
+      } catch (error) {
+        console.error('Error adding product:', error);
+
+        // Show error alert
+        setSnackbarMessage(`Error adding ${name}. Please try again.`);
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      }
       setNewProduct({ name: '', description: '', price: '', stock: '' }); // Reset form
       onClose();
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
+
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Add New Product</DialogTitle>
-      <DialogContent>
-        <TextField
-          label="Name"
-          fullWidth
-          margin="normal"
-          value={newProduct.name}
-          onChange={handleChange('name')}
-          error={!!errors.name}
-          helperText={errors.name}
-        />
-        <TextField
-          label="Description"
-          fullWidth
-          margin="normal"
-          value={newProduct.description}
-          onChange={handleChange('description')}
-          error={!!errors.description}
-          helperText={errors.description}
-        />
-        <TextField
-          label="Price"
-          type="number"
-          fullWidth
-          margin="normal"
-          value={newProduct.price}
-          onChange={handleChange('price')}
-          error={!!errors.price}
-          helperText={errors.price}
-          inputProps={{ step: 0.01 }}
-        />
-        <TextField
-          label="Stock"
-          type="number"
-          fullWidth
-          margin="normal"
-          value={newProduct.stock}
-          onChange={handleChange('stock')}
-          error={!!errors.stock}
-          helperText={errors.stock}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={handleSubmit} color="primary">
-          Add
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <>
+      <Dialog open={open} onClose={onClose}>
+        <DialogTitle>Add New Product</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Name"
+            fullWidth
+            margin="normal"
+            value={newProduct.name}
+            onChange={handleChange('name')}
+            error={!!errors.name}
+            helperText={errors.name}
+          />
+          <TextField
+            label="Description"
+            fullWidth
+            margin="normal"
+            value={newProduct.description}
+            onChange={handleChange('description')}
+            error={!!errors.description}
+            helperText={errors.description}
+          />
+          <TextField
+            label="Price"
+            type="number"
+            fullWidth
+            margin="normal"
+            value={newProduct.price}
+            onChange={handleChange('price')}
+            error={!!errors.price}
+            helperText={errors.price}
+            inputProps={{ step: 0.01 }}
+          />
+          <TextField
+            label="Stock"
+            type="number"
+            fullWidth
+            margin="normal"
+            value={newProduct.stock}
+            onChange={handleChange('stock')}
+            error={!!errors.stock}
+            helperText={errors.stock}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => (handleAddProduct(newProduct))} color="primary">
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar to show success/error messages */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        sx={{
+          width: '400px',
+          border: '2px solid',
+          borderColor: (theme) => theme.palette.success.dark,
+          borderRadius: '4px',
+          boxShadow: 3,
+        }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 
