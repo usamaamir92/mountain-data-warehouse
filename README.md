@@ -149,7 +149,7 @@ This project is licensed under the MIT License (LICENSE).
 - **Basic Frontend Form Validation** has been implemented for product and order creation, and price and stock input fields, with error messages for invalid inputs (e.g., price < 0 or missing required fields).
 
 #### UI/UX Framework
-- The app uses **Material UI** for ready made responsive design components and provide a modern, consistent UI.
+- The app uses **Material UI** for ready made responsive design components and provides a modern and consistent UI.
   
 #### User Feedback
 - **Snackbar Notifications (MUI version of Toast)** are used to display success and error messages to users, ensuring clear feedback for actions with API interactions.
