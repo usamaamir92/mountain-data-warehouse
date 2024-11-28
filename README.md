@@ -91,16 +91,30 @@ cd mountain-data-warehouse
    The frontend will be available at http://localhost:5173.
 
 
-
 ### Troubleshooting
 
 - SQL Server Connection Issues: Ensure SQL Server is running and accessible. Use .\SQLEXPRESS if you are using the default local instance.
 - Port Conflicts: Verify that no other applications are running on http://localhost:5130 or http://localhost:5173.
 
 
-## License
+## Testing
 
-This project is licensed under the MIT License (LICENSE).
+To run the tests for this project, follow the steps below:
+
+1. **Navigate to the `server` directory**:
+   ```bash
+   cd server
+   ```
+
+2. **Restore dependencies (if not done already)**:
+   ```bash
+   dotnet restore
+   ```
+
+3. **Run the tests:**:
+   ```bash
+   dotnet test
+   ```
 
 ## Architecture, Design Decisions and Limitations
 
@@ -154,5 +168,36 @@ This project is licensed under the MIT License (LICENSE).
 #### User Feedback
 - **Snackbar Notifications (MUI version of Toast)** are used to display success and error messages to users, ensuring clear feedback for actions with API interactions.
 
+### Testing
+
+#### Backend Tests
+
+The backend is unit tested using **xUnit** and EF's **in-memory database** for mocking dependencies. The current tests focus on basic functionality such as:
+
+- **Product Service**: Ensures the ability to create, update, and fetch products.
+- **Order Service**: Verifies order creation and handling.
+
+The tests focus on isolated business logic in the service layer without needing to interact with the full database or external dependencies. The **in-memory database** is used for simulating database interactions, allowing the tests to run quickly and independently.
+
+While these unit tests cover the primary use cases, they are limited in scope. There is room to expand the tests to cover additional edge cases, such as:
+
+- Handling invalid data.
+- Simulating failures (e.g., database errors, network issues).
+- Validating input more rigorously.
+- Asserting for different exception types.
+
+With more time, additional tests could be added to increase the coverage and enable more robust testing.
+
+#### Frontend Tests
+
+In the interest of time and being able to be tested in real-time, **frontend testing** was not implemented. However, it is recognised as an important part of ensuring the stability of the user interface and application behavior.
+
+Some potential frontend tests include:
+
+- **Unit tests for components**: To verify individual component logic and rendering.
+- **Integration tests**: To ensure that components relate to each other correctly.
+- **End-to-end tests**: To simulate the user flow and validate the overall functionality of the app.
 
 
+## License
+This project is licensed under the MIT License (LICENSE).
