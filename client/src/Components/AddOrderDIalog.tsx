@@ -12,13 +12,15 @@ import {
     FormControl, 
     Snackbar, 
     Alert,
-    Grid2,
-    Typography,
     IconButton,
     Box,
-    Tooltip
+    Tooltip,
+    responsiveFontSizes
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import axios from 'axios';
+
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 interface AddOrderDialogProps {
   open: boolean;
@@ -96,18 +98,48 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose, onAdd, a
       return valid;
     };
   
-    const handleSubmit = () => {
-      if (validate()) {
-        onAdd({ products: orderProducts });
-        setSnackbarMessage('Order successfully added.');
-        setSnackbarSeverity('success');
-        setSnackbarOpen(true);
-        onClose();
-      } else {
-        setSnackbarMessage('Please fix the errors before submitting.');
-        setSnackbarSeverity('error');
-        setSnackbarOpen(true);
-      }
+    const handleSubmit = async () => {
+        if (validate()) {
+          // Prepare the data for the POST request (only productId and quantity)
+          const requestData = {
+            products: orderProducts.map(product => ({
+              productId: product.productId,
+              quantity: product.quantity,
+            })),
+          };
+
+          console.log("request data: ", requestData);
+  
+          try {
+            // Send POST request using axios
+            const response = await axios.post(`${backendUrl}/orders`, requestData);
+  
+            if (response.status === 201) {
+              // On success, show success message
+              setSnackbarMessage('Order successfully created.');
+              setSnackbarSeverity('success');
+              setSnackbarOpen(true);
+
+              // Delay closing the dialog to allow the snackbar to be visible
+              setTimeout(() => {
+                  onAdd({ products: requestData });
+                  onClose();
+              }, 300); // Set the delay time to match your snackbar duration (3000ms)
+            } else {
+              // On error, show error message
+              setSnackbarMessage(`Error creating order: ${response.data.message || 'Unknown error'}`);
+              setSnackbarSeverity('error');
+              setSnackbarOpen(true);
+            }
+          } catch (error) {
+            // Handle axios error
+            console.log("Post request error: ", error)
+            const errorMessage = error.response.data.message;
+            setSnackbarMessage(`Error creating order: ${errorMessage}`);
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
+          }
+        }
     };
   
     return (
@@ -181,12 +213,14 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose, onAdd, a
           {/* Add Another Product Button */}
           <Box display="flex" justifyContent="flex-end" style={{ marginTop: '16px' }}>
             <Button
-              variant="contained"
-              color="primary"
-              onClick={handleAddProduct}
-              style={{ marginBottom: '16px', marginRight: '32px' }}
+                variant="contained"
+                color="primary"
+                onClick={handleAddProduct}
+                style={{
+                marginBottom: '16px',
+                }}
             >
-              + Add Product
+                + Add Product
             </Button>
           </Box>
         </DialogContent>
@@ -201,7 +235,12 @@ const AddOrderDialog: React.FC<AddOrderDialogProps> = ({ open, onClose, onAdd, a
         </DialogActions>
   
         {/* Snackbar */}
-        <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={() => setSnackbarOpen(false)}>
+        <Snackbar 
+          open={snackbarOpen} 
+          autoHideDuration={3000} 
+          onClose={() => setSnackbarOpen(false)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
           <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
             {snackbarMessage}
           </Alert>

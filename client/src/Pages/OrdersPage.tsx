@@ -72,6 +72,11 @@ const OrdersPage = () => {
     }
   };
 
+  // The onAdd function passed to AddOrderDialog will update the orders state
+  // const handleAddOrder = (order: { products: { productId: string, quantity: number }[] }) => {
+  //   setOrders((prev) => [...prev, order]); // Update orders with the new order
+  // };
+
   return (
     <div>
       <Typography variant="h4" gutterBottom>
