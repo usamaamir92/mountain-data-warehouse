@@ -146,7 +146,7 @@ This project is licensed under the MIT License (LICENSE).
 - **Global State Management** is handled using **Zustand**, a lightweight state management library. This was chosen over a more comprehensive React library like Redux due to being lightweight, low overhead and more applicable to the scale of this app. Global state management allows consistent handling of application state (product and order lists) with actions and dispatchers, minimising unnecessary API calls.
 
 #### Form Validation
-- **Basic Frontend Form Validation** has been implemented for product and order creation, price, and stock input fields, with error messages for invalid inputs (e.g., price < 0 or missing required fields).
+- **Basic Frontend Form Validation** has been implemented for product and order creation, and price and stock input fields, with error messages for invalid inputs (e.g., price < 0 or missing required fields).
 
 #### UI/UX Framework
 - The app uses **Material UI** for ready made responsive design components and provide a modern, consistent UI.
